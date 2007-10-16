@@ -1,0 +1,17 @@
+include $(MK)/header.mk
+
+TARGETS = app.exe cli.exe
+SUBDIRS = Dir_1 Dir_2
+
+app.exe_DEPS = top_a.o top_b.o main.o $(SUBDIRS_TGTS)
+app.exe_LIBS = -lm
+app.exe_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
+
+cli.exe_DEPS = cli.o cli_dep.o
+# Let's use DEFAULT_MAKECMD for cli.exe
+
+include $(MK)/footer.mk
+# This is just a convenience - to let you know when make has stopped
+# interpreting make files and started their execution.
+$(info Rules generated...)
+# vim: set ft=make :
