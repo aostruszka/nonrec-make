@@ -10,7 +10,8 @@ you actually use this I'd like to hear from you :) - is it useful, does
 it perform well, do you have any suggestions for the improvements ...
 and so on.  This implementation is based on GNU make and its new
 features introduced in 3.80.  But don't use that version - these
-features has bugs.  Use version 3.81 where everything works OK.
+features had bugs in that version.  Use version 3.81 where everything
+works OK.
 
 Before you keep on reading though, just take a look at the structure of
 the Rules.mk files (Rules.top has exactly the same structure as Rules.mk
