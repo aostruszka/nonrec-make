@@ -97,7 +97,7 @@ you to run it at the top level and make full build each time).
 This build system was designed to have very simple structure of the
 "user makefiles".  The user just has to set the Rules.mk files in each
 directory and some general configuration options.  All the "magic" is
-hidden in header.mk, footer.mk and skel.mk which don't have to
+hidden in header.mk, footer.mk and skel.mk which don't have to be
 modified [1].
 
 The structure of the Rules.mk is following (this is from top level
@@ -243,9 +243,9 @@ subdirectory of the directory where Rules.mk is present.  You can use
 this OBJDIR variable (and perhaps some conditional statements) to setup
 the output path according to your current compilation mode.  E.g.
 obj/debug for objects with debugging information or obj/ppc_7xx for
-cross compilation to the given Power PC family and so on.  By default
-I check if CPU_MODEL variable is set and if it is then the objects are
-created in the obj/$(CPU_MODEL) subdirectory of current directory.
+cross compilation to the given Power PC family and so on.  There's
+predefined (in config* files) HOST_ARCH variable that you can use for
+this (e.g. set OBJDIR := obj/$(HOST_ARCH) in skel.mk).
 
 Finally let me explain what targets are defined and the way you can run
 them from command line.  By default (that is if you have not modified

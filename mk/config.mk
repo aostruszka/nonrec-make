@@ -13,7 +13,7 @@ HOST_ARCH := $(BUILD_ARCH)
 ENDIAN := $(shell perl -le 'print unpack(N,pack(L,0x01020304)) == 0x01020304 ? big : little')
 
 # Make the compiler invocation lines terse
-CC_SILENT := true
+VERBOSE := false
 
 # Uncomment if you don't like coloring of the output
 #COLOR_TTY := false

@@ -49,10 +49,16 @@ else
 endif
 
 # ... and here's a good place to translate some of these settings into
-# compilation flags/variables
+# compilation flags/variables.  As an example a preprocesor macro for
+# target endianess
+ifeq ($(ENDIAN),big)
+  CPPFLAGS += -DBIG_ENDIAN
+else
+  CPPFLAGS += -DLITTLE_ENDIAN
+endif
 
-######### End of "configuration" part if you change anything below ######
-######### you should have at least vague idea how this works :D    ######
+######### A more advanced part - if you change anything below    ######
+######### you should have at least vague idea how this works :D  ######
 
 # I define these for convenience - you can use them in your command for
 # updating the target.  Since I'm using fake file dependency to make
@@ -65,8 +71,7 @@ DEP_OBJS = $(filter %.o, $^)
 
 # Targets that match this pattern (make pattern) will use rules defined
 # in:
-# - def_rules.mk included below or
-# - `skeleton' defined below or
+# - def_rules.mk included below (explicit or via `skeleton' macro)
 # - built in make rules
 # Other targets will have to use _DEPS (and so on) variables which are
 # saved in `save_vars' and used in `tgt_rule' (see below).
@@ -84,9 +89,6 @@ OBJPATH = $(d)/$(OBJDIR)
 # corresponding source file will be searched in some/dir and in
 # some/dir/{x,y,z,...} where "x y z ..." is value of this variable.
 SRCS_VPATH := src
-
-# Suck in the default rules
-include $(MK)/def_rules.mk
 
 # These are commands that are used to update the target.  If you have
 # a target that make handles with built in rules just add its pattern to
@@ -128,7 +130,7 @@ define tgt_rule
 abs_deps := $$(filter /%,$$(DEPS_$(1)))
 rel_deps := $$(filter-out /%,$$(DEPS_$(1)))
 abs_deps += $$(addprefix $(OBJPATH)/,$$(rel_deps))
--include $$(patsubst %.o,%.d,$$(filter %.o,$$(abs_deps)))
+-include $$(addsuffix .d,$$(basename $$(abs_deps)))
 ifneq ($(LIBS_$(1)),)
 $(1): LDLIBS += $(LIBS_$(1))
 endif
@@ -136,18 +138,5 @@ $(1): $$(abs_deps) $(OBJPATH)/.fake_file
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef
 
-%/$(OBJDIR)/.fake_file:
-	@[ -d $(dir $@) ] || mkdir -p $(dir $@); touch $@
-
-COMPILECMD = $(COMPILE$(suffix $<)) -o $@ $<
-
-define skeleton
-$(OBJPATH)/%.o: $(1)/%.cpp $(OBJPATH)/.fake_file
-	$(value COMPILECMD)
-
-$(OBJPATH)/%.o: $(1)/%.cc $(OBJPATH)/.fake_file
-	$(value COMPILECMD)
-
-$(OBJPATH)/%.o: $(1)/%.c $(OBJPATH)/.fake_file
-	$(value COMPILECMD)
-endef
+# Suck in the default rules
+include $(MK)/def_rules.mk
