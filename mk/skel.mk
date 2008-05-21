@@ -33,9 +33,11 @@ INCLUDES :=
 CPPFLAGS = -MMD -D_REENTRANT -D_POSIX_C_SOURCE=200112L -D__EXTENSIONS__ \
 	   -DDEBUG $(DIR_INCLUDES) $(addprefix -I,$(INCLUDES))
 
-# Linker flags for all configurations
-LDFLAGS :=
-LDLIBS := # -lpthread
+# Linker flags.  The values below will use what you've specified for
+# particular target or directory but if you have some flags or libraries
+# that should be used for all targets/directories just append them at end.
+LDFLAGS = $(addprefix -L,$(LIBDIRS_$(subst /$(OBJDIR),,$(@D))))
+LDLIBS = $(LIBS_$(@))
 
 ############# This is the end of generic flags #############
 
@@ -100,7 +102,10 @@ SRCS_VPATH := src
 # specific command to build the target DEFAULT_MAKECMD is used.  See
 # skel.mk for the explanation of the R versions of ? and ^ variables.
 MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(?R) && $(RANLIB) $@
-DEFAULT_MAKECMD = $(LINK.cc) $(^R) $(LDLIBS) -o $@
+# FIXME shared library extension on cygwin is dll, also clean up the
+# case when the shared library is a dependency of some target
+MAKECMD.so = $(LINK.cc) $(DEP_LIBS) $(DEP_OBJS) $(LDLIBS) -shared -o $@
+DEFAULT_MAKECMD = $(LINK.cc) $(DEP_LIBS) $(DEP_OBJS) $(LDLIBS) -o $@
 
 ########################################################################
 # Below is a "Blood sugar sex^H^H^Hmake magik" :) - don't touch it
@@ -131,9 +136,6 @@ abs_deps := $$(filter /%,$$(DEPS_$(1)))
 rel_deps := $$(filter-out /%,$$(DEPS_$(1)))
 abs_deps += $$(addprefix $(OBJPATH)/,$$(rel_deps))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
-ifneq ($(LIBS_$(1)),)
-$(1): LDLIBS += $(LIBS_$(1))
-endif
 $(1): $$(abs_deps) $(OBJPATH)/.fake_file
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef

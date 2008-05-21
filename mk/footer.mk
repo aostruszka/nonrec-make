@@ -1,5 +1,17 @@
 SUBDIRS_$(d) := $(patsubst %/,%,$(addprefix $(d)/,$(SUBDIRS)))
-OBJS_$(d) := $(addprefix $(OBJPATH)/,$(or $(OBJS),$(addsuffix .o,$(basename $(SRCS)))))
+
+ifneq ($(strip $(OBJS)),)
+OBJS_$(d) := $(addprefix $(OBJPATH)/,$(OBJS))
+else # Populate OBJS_ from SRCS
+
+# Expand wildcards in SRCS if they are given
+ifneq ($(or $(findstring *,$(SRCS)),$(findstring ?,$(SRCS)),$(findstring ],$(SRCS))),)
+  SRCS := $(notdir $(foreach sd,. $(SRCS_VPATH),$(wildcard $(addprefix $(d)/$(sd)/,$(SRCS)))))
+endif
+
+OBJS_$(d) := $(addprefix $(OBJPATH)/,$(addsuffix .o,$(basename $(SRCS))))
+endif
+
 CLEAN_$(d) := $(CLEAN_$(d)) $(addprefix $(d)/,$(CLEAN))
 
 $(foreach sd,$(SRCS_VPATH),$(eval INCLUDES_$(d)/$(sd) := $(or $(INCLUDES_$(d)/$(sd)),$(INCLUDES_$(d)))))
@@ -33,9 +45,6 @@ clean_extra_$(d) :
 
 clean_tree_$(d) : clean_$(d) $(foreach sd,$(SUBDIRS_$(d)),clean_tree_$(sd))
 
-# This is a default rule - see Makefile
-dir_$(d) : $(TARGETS_$(d))
-
 # Skip the target rules generation and inclusion of the dependencies
 # when we just want to clean up things :)
 ifeq ($(filter clean clean_% dist_clean,$(MAKECMDGOALS)),)
@@ -49,3 +58,6 @@ $(foreach vd,$(SRCS_VPATH),$(eval $(call skeleton,$(d)/$(vd))))
 # Target rules for all "non automatic" targets
 $(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS_$(d))),$(eval $(call tgt_rule,$(tgt))))
 endif
+
+# This is a default rule - see Makefile
+dir_$(d) : $(or $(TARGETS_$(d)),$(SUBDIRS_TGTS))
