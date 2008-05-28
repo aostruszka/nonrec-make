@@ -1,5 +1,8 @@
 include $(MK)/header.mk
 
-SRCS := dir_1a_file1.c dir_1a_file2.c dir_1a_file3.c
+# You can use wildcards in SRCS - they are detected and expanded by this
+# make system (not make itself).  You can always use builtin wildcard
+# function e.g. SRCS := $(notdir $(wildcard ...))
+SRCS := *.c
 
 include $(MK)/footer.mk

@@ -1,4 +1,8 @@
 Author: Andrzej Ostruszka <andrzej.ostruszka@gmail.com>
+URL: http://nonrec-make.googlecode.com/
+
+NOTE: This readme _might_ not be up to date.  For up to date information
+see the above URL (and accompanying wiki pages).
 
 This is my attempt to implement a non-recursive make build system.  For
 the motivation Google for the paper "Recursive make consider harmful" by
@@ -61,8 +65,9 @@ subfolder (do not pay attention to all *.c files).
     Dir_1b/
       Makefile
       Rules.mk
-      dir_1b_file1.c
-      dir_1b_file2.c
+      src/
+        dir_1b_file1.c
+        dir_1b_file2.c
   Dir_2/
     Makefile
     Rules.mk
@@ -134,6 +139,12 @@ Line 6 - app.exe depends on ... (SUBDIRS_TGTS is a variable that
 Line 7 - app.exe should be linked with math library
 Line 8 - this is the command to use to build app.exe
 Line 10 - cli.exe depends on ... and use the default "rule" to build it
+Line 16 - The comment above this line tries to explain its purpose.
+	  I find it helpful to know when make has read all the make
+	  files and started to scan resulting dependency graph for
+	  necessary updates so I put this at the end in the rules of
+	  the top directory (Rules.top - there's no need for this in
+	  other directories).
 
 You can specify the targets for current directory in two ways:
 1. Give them in TARGETS.  Each target can have it's own *_DEPS, *_LIBS
@@ -154,15 +165,23 @@ You can specify the targets for current directory in two ways:
 -8<---------------------------
 
 There are "reserved" variables that you should not modify.  Most notably:
-- $(d) is the directory of the current Rules.mk
+- $(d) is the directory of the current Rules.mk [see note 2]
 - $(TOP) is the top level directory of the project tree
 - $(MK) is the directory where the included *.mk makefiles are
 For the full list you have to take a look at the makefiles in mk
 directory (e.g. in the skel.mk there are macros 'include_subdir_rules',
 'save_vars', 'tgt_rule' and 'skeleton' which you should not change [1]).
 
-Going back to the Rules.mk - you can use the wildcards but you should do
-that as follows:
+Going back to the Rules.mk.  Normally wildcards in variable assignments
+are not expanded in make but this make system detects wildcards in SRCS
+and expands them (both in directory of the Rules.mk and its SRCS_VPATH
+subdirectories - see below what SRCS_VPATH is used for).  Thus you can
+simply say in Rules.mk:
+
+SRCS := *.c
+
+Of course you can use the built in make wildcards but you should do that
+as follows:
 
 SRCS := $(notdir $(wildcard $(d)/*.c))
 
@@ -227,6 +246,18 @@ INCLUDES_$(d) := $(TOP)/some/special/include_dir
 into its Rules.mk and all files in this directory will be compiled with
 -I$(TOP)/some...  switch.  The same goes for CFLAGS and CXXFLAGS.
 
+The same goes for the linker flags - quoting from skel.mk:
+
+LDFLAGS = $(addprefix -L,$(LIBDIRS_$(subst /$(OBJDIR),,$(@D))))
+LDLIBS = $(LIBS_$(@))
+
+The above means that if targets in given directory need to be linked
+with special -L switches you can provide them via LIBDIRS_$(d)
+variables.  If there are some global -L switches just append them in
+skel.mk.  The second line above shows how *_LIBS variable that you can
+give for specific target gets added to the LDLIBS (there's 'save_vars'
+in between if you're curious :)).
+
 You can of course use target specific variables that GNU make supports
 so you have more control (if you don't know what target specific
 variables are take a look into manual).  Say you want to compile
@@ -278,7 +309,11 @@ Then:
 * 'make' (same as 'make dir_$(pwd)')
    builds all targets in the Dir_1 which in our example is
    Dir_1/obj/dir1_lib.a - of course any of its dependencies that are not
-   up to date are updated
+   up to date are updated also.  This rule has one exception - if your
+   Rules.mk has no targets and only SUBDIRS (e.g. you have grouped
+   several subdirectories in one directory) then simple 'make' in this
+   directory - instead of doing nothing - will build targets of all its
+   subdirectories.
 * 'make clean' (same as 'make clean_$(pwd)')
    removes everything from Dir_1/obj/
 * 'make clean_tree (same as 'make clean_tree_$(pwd)')
@@ -299,6 +334,14 @@ Have fun!
 [1] Unless this build system does not do what you wanted :-P.  In that
 case you probably need to spiff it up.  So you'll need to
 digest it first and here's my hand at it :).
+[2] You should know that make works in two phases - first it scans the
+makefiles and then it begins their execution (see discussion of
+'immediate' and 'deferred' in section 'Reading Makefiles' of make
+manual).  This implies that the $(d) variable is not valid during
+execution of the commands used for target updates.  If you need to refer
+to the directory of the target or prerequisite you should rely on
+automatic variables (@, <, ...) and built in functions (dir, notdir,
+...).
 
 Every Rules.mk (or Rules.top) need to include header.mk and footer.mk.
 The main purpose of header is to clear all variables that you can use

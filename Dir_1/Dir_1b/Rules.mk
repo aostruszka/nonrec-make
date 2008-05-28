@@ -1,6 +1,7 @@
 include $(MK)/header.mk
 
-# If you want to use wildcards you can do it that way
-SRCS := $(notdir $(wildcard $(d)/*.c))
+# Wildcards in SRCS work both in "current" directory and its SRCS_VPATH
+# subdirectories
+SRCS := *.c
 
 include $(MK)/footer.mk

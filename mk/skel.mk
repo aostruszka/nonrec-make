@@ -36,7 +36,7 @@ CPPFLAGS = -MMD -D_REENTRANT -D_POSIX_C_SOURCE=200112L -D__EXTENSIONS__ \
 # Linker flags.  The values below will use what you've specified for
 # particular target or directory but if you have some flags or libraries
 # that should be used for all targets/directories just append them at end.
-LDFLAGS = $(addprefix -L,$(LIBDIRS_$(subst /$(OBJDIR),,$(@D))))
+LDFLAGS = $(LDFLAGS_$(@)) $(addprefix -L,$(LIBDIRS_$(subst /$(OBJDIR),,$(@D))))
 LDLIBS = $(LIBS_$(@))
 
 ############# This is the end of generic flags #############
@@ -128,6 +128,7 @@ endef
 define save_vars
 DEPS_$(OBJPATH)/$(1) = $$($(1)_DEPS)
 LIBS_$(OBJPATH)/$(1) = $$($(1)_LIBS)
+LDFLAGS_$(OBJPATH)/$(1) = $$($(1)_LDFLAGS)
 CMD_$(OBJPATH)/$(1) = $$($(1)_CMD)
 endef
 
