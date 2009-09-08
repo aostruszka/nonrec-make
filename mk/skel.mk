@@ -59,6 +59,10 @@ else
   CPPFLAGS += -DLITTLE_ENDIAN
 endif
 
+# Use host/build specific config files to override default extension
+# for shared libraries 
+SOEXT := $(or $(SOEXT),so)
+
 ######### A more advanced part - if you change anything below    ######
 ######### you should have at least vague idea how this works :D  ######
 
@@ -66,8 +70,9 @@ endif
 # updating the target.  Since I'm using fake file dependency to make
 # sure the OBJDIR exists I filter it out here.  Mnemonic for these
 # ? ^ versions is Real (that is not fake :))
-DEP_LIBS = $(filter %.a, $^)
 DEP_OBJS = $(filter %.o, $^)
+DEP_ARCH = $(filter %.a, $^)
+DEP_LIBS = $(addprefix -L,$(dir $(filter lib%.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter lib%.$(SOEXT), $^)))
 ?R = $(filter-out %/.fake_file,$?)
 ^R = $(filter-out %/.fake_file,$^)
 
@@ -102,10 +107,8 @@ SRCS_VPATH := src
 # specific command to build the target DEFAULT_MAKECMD is used.  See
 # skel.mk for the explanation of the R versions of ? and ^ variables.
 MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(?R) && $(RANLIB) $@
-# FIXME shared library extension on cygwin is dll, also clean up the
-# case when the shared library is a dependency of some target
-MAKECMD.so = $(LINK.cc) $(DEP_LIBS) $(DEP_OBJS) $(LDLIBS) -shared -o $@
-DEFAULT_MAKECMD = $(LINK.cc) $(DEP_LIBS) $(DEP_OBJS) $(LDLIBS) -o $@
+MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LDLIBS) -shared -o $@
+DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LDLIBS) -o $@
 
 ########################################################################
 # Below is a "Blood sugar sex^H^H^Hmake magik" :) - don't touch it
