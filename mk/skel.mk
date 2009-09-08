@@ -72,7 +72,7 @@ SOEXT := $(or $(SOEXT),so)
 # ? ^ versions is Real (that is not fake :))
 DEP_OBJS = $(filter %.o, $^)
 DEP_ARCH = $(filter %.a, $^)
-DEP_LIBS = $(addprefix -L,$(dir $(filter lib%.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter lib%.$(SOEXT), $^)))
+DEP_LIBS = $(addprefix -L,$(dir $(filter %.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter %.$(SOEXT), $^)))
 ?R = $(filter-out %/.fake_file,$?)
 ^R = $(filter-out %/.fake_file,$^)
 
