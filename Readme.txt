@@ -89,6 +89,11 @@ subfolder (do not pay attention to all *.c files).
       Makefile
       Rules.mk
       ex.c
+  Dir_3/
+    Makefile
+    Rules.mk
+    dir_3_file1.c
+    dir_3_file2.c
 
 There's one top level make file (Rules.top) which eventually includes
 all the makefiles.  In addition in each directory there is Makefile
@@ -116,10 +121,10 @@ Rules.top which has the same format as Rules.mk):
 5: 
 6:  app.exe_DEPS = top_a.o top_b.o main.o $(SUBDIRS_TGTS)
 7:  app.exe_LIBS = -lm
-8:  app.exe_CMD = $(LINK.c) $^ $(LDLIBS) -o $@
+8:  # Let's use DEFAULT_MAKECMD for app.exe
 9:
 10: cli.exe_DEPS = cli.o cli_dep.o
-11: # Let's use DEFAULT_MAKECMD for cli.exe
+11: cli.exe_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
 12: 
 13: include $(MK)/footer.mk
 14: # This is just a convenience - to let you know when make has stopped
@@ -137,8 +142,10 @@ Line 6 - app.exe depends on ... (SUBDIRS_TGTS is a variable that
 	 contains all the targets from the subdirectories mentioned at
 	 line 4)
 Line 7 - app.exe should be linked with math library
-Line 8 - this is the command to use to build app.exe
-Line 10 - cli.exe depends on ... and use the default "rule" to build it
+Line 8 - app.exe will be built with default "rule"
+Line 10 - cli.exe depends on ... and
+Line 11 - use the following command to build it (notice $(^R) instead of
+	  $^ - see below)
 Line 16 - The comment above this line tries to explain its purpose.
 	  I find it helpful to know when make has read all the make
 	  files and started to scan resulting dependency graph for
@@ -156,10 +163,10 @@ You can specify the targets for current directory in two ways:
   In that case you can list them in OBJS or SRCS like e.g. in Rules.mk
   from Dir_1a 
 
--8<---Dir_1/Dir_1a/Rules.mk---
+-8<---Dir_2/Dir_2a/Rules.mk---
 1: include $(MK)/header.mk
 2: 
-3: SRCS := dir_1a_file1.c dir_1a_file2.c dir_1a_file3.c
+3: SRCS := dir_2a_file1.c dir_2a_file2.c dir_2a_file3.c
 4: 
 5: include $(MK)/footer.mk
 -8<---------------------------
