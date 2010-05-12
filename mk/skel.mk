@@ -144,5 +144,9 @@ $(1): $$(abs_deps) $(OBJPATH)/.fake_file
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef
 
+define subtree_tgts
+$(TARGETS_$(1)) $(foreach sd,$(SUBDIRS_$(1)),$(call subtree_tgts,$(sd)))
+endef
+
 # Suck in the default rules
 include $(MK)/def_rules.mk
