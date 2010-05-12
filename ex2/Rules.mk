@@ -4,7 +4,6 @@ TARGETS = app.exe
 SUBDIRS = a b
 
 app.exe_DEPS = app.o $(call subtree_tgts,$(d)/a) $(TARGETS_$(d)/b)
-app.exe_CMD = $(LINK.c) $(DEP_OBJS) $(DEP_ARCH) -o $@
 
 include $(MK)/footer.mk
 # This is just a convenience - to let you know when make has stopped
