@@ -1,11 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+extern void function_dir_3_file1(void);
 
-int main(int argc, char **argv)
+int main()
 {
   // To make dependency on shared library from Dir_3
   function_dir_3_file1();
-  return EXIT_SUCCESS;
+  return 0;
 }
-
-/* vim: set cin sw=4 cino=^-2,g2,h2: */
