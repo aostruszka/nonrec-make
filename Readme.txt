@@ -26,30 +26,23 @@ looks from the user perspective just by looking at the example than
 reading its explanation :D.
 
 OK, now that you have a feeling how the Rules.mk look like let me walk
-you through an example.  Consider the project that has some
-source files at the top directory and is depending on two libraries in
-Dir_1 and Dir_2.  The libraries themselves are partitioned between
-several subdirectories and Dir_2 has some examples in a separate
-subfolder (do not pay attention to all *.c files).
+you through an example (ex1 in the repository).  Consider the project
+that has some source files at the top directory and is depending on two
+libraries in Dir_1 and Dir_2 and another one in Dir_3.  The libraries
+themselves are partitioned between several subdirectories and Dir_2 has
+some examples in a separate subfolder (do not pay attention to all *.c
+files).
 
-./
+ex1/
   Makefile
-  Rules.top
+  Rules.top <- Just a symlink to Rules.mk to mark where the top level is
+  Rules.mk
   main.c
   top_a.c
   top_b.c
   cli.c
   cli_dep.c
-  mk/
-    skel.mk
-    footer.mk
-    header.mk
-    def_rules.mk
-    config.mk
-    config-default.mk
-    config-Cygwin-i686_Cygwin-i686.mk
-    config-Cygwin-i686_Linux-ppc.mk
-    config-SunOS-sun4u_SunOS-sun4u.mk
+  mk/* <- This is where the mk files from this build system are
   Dir_1/
     Makefile
     Rules.mk
@@ -111,7 +104,10 @@ hidden in header.mk, footer.mk and skel.mk which don't have to be
 modified [1].
 
 The structure of the Rules.mk is following (this is from top level
-Rules.top which has the same format as Rules.mk):
+Rules.top which has the same format as Rules.mk - and in fact it is
+suggested that it should be a symlink to normal Rules.mk file since it
+will allow for this project to act as a subproject of some super project
+treating your whole project tree as a subdirectory[2]):
 
 -8<---Rules.top---------------
 1:  include $(MK)/header.mk
@@ -340,8 +336,22 @@ Have fun!
 
 [1] Unless this build system does not do what you wanted :-P.  In that
 case you probably need to spiff it up.  So you'll need to
-digest it first and here's my hand at it :).
-[2] You should know that make works in two phases - first it scans the
+digest it first and note [3] is my hand at it :).
+
+[2] There is one limitation that you should be aware.  You should not
+have in your project two "target specific" LIBS, LDFLAGS or CMD
+variables (that is those that are used during second phase of make
+execution) that have the same names!  For example in one part of your
+tree you're generating target abc which has it's abc_CMD and in the
+other part another target that has the same name and also it's own
+command.  In such case the last assignment to abc_CMD will hold and it
+will be used for both targets.  The same goes for LIBS and LDFLAGS.
+
+And this also applies to situation when you would like to use two
+subprojects in one larger project.  There should be no clash between
+variables from these subprojects.
+
+[3] You should know that make works in two phases - first it scans the
 makefiles and then it begins their execution (see discussion of
 'immediate' and 'deferred' in section 'Reading Makefiles' of make
 manual).  This implies that the $(d) variable is not valid during
