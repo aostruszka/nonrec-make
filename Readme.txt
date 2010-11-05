@@ -1,5 +1,6 @@
 Author: Andrzej Ostruszka <andrzej.ostruszka@gmail.com>
-URL: http://nonrec-make.googlecode.com/
+URL: http://github.com/aostruszka/nonrec-make
+(or older URL: http://nonrec-make.googlecode.com/)
 
 NOTE: This readme _might_ not be up to date.  For up to date information
 see the above URL (and accompanying wiki pages).
