@@ -41,11 +41,11 @@ clean_all :: clean_$(d)
 
 # No point to enforce clean_extra dependency if CLEAN is empty
 ifeq ($(strip $(CLEAN_$(d))),)
-dist_clean ::
+dist_clean :: $(OBJPATH)/.fake_file
 else
-dist_clean :: clean_extra_$(d)
+dist_clean :: $(OBJPATH)/.fake_file clean_extra_$(d)
 endif
-	rm -rf $(subst clean_extra_,,$<)/$(subst $(HOST_ARCH),,$(OBJDIR))
+	rm -rf $(<D)
 
 #### Per directory targets ####
 
