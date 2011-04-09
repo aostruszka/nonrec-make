@@ -25,12 +25,6 @@ endif
 
 $(foreach sd,$(SUBDIRS),$(eval $(call include_subdir_rules,$(sd))))
 
-# If the directory is just for grouping its targets will be targets from
-# all subdirectories
-ifeq ($(strip $(TARGETS_$(d))),)
-TARGETS_$(d) := $(foreach sd,$(SUBDIRS_$(d)),$(TARGETS_$(sd)))
-endif
-
 .PHONY: dir_$(d) clean_$(d) clean_extra_$(d) clean_tree_$(d)
 .SECONDARY: $(OBJPATH)/.fake_file
 
@@ -75,6 +69,12 @@ $(foreach vd,$(SRCS_VPATH),$(eval $(call skeleton,$(d)/$(vd))))
 
 # Target rules for all "non automatic" targets
 $(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS_$(d))),$(eval $(call tgt_rule,$(tgt))))
+
+# If the directory is just for grouping its targets will be targets from
+# all subdirectories
+ifeq ($(strip $(TARGETS_$(d))),)
+TARGETS_$(d) := $(SUBDIRS_TGTS)
+endif
 
 endif
 
