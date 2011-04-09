@@ -33,11 +33,22 @@ all :: $(TARGETS_$(d))
 
 clean_all :: clean_$(d)
 
+# No point to enforce clean_extra dependency if CLEAN is empty
+ifeq ($(strip $(CLEAN_$(d))),)
+dist_clean ::
+else
 dist_clean :: clean_extra_$(d)
+endif
 	rm -rf $(subst clean_extra_,,$<)/$(subst $(HOST_ARCH),,$(OBJDIR))
 
-# Per directory targets
+#### Per directory targets ####
+
+# Again - no point to enforce clean_extra dependency if CLEAN is empty
+ifeq ($(strip $(CLEAN_$(d))),)
+clean_$(d) :
+else
 clean_$(d) : clean_extra_$(d)
+endif
 	rm -f $(subst clean_,,$@)/$(OBJDIR)/*
 
 clean_extra_$(d) :
