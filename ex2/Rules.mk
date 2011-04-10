@@ -1,9 +1,9 @@
 include $(MK)/header.mk
 
-TARGETS = app.exe
+TARGETS = app2.exe
 SUBDIRS = a b
 
-app.exe_DEPS = app.o $(call subtree_tgts,$(d)/a) $(TARGETS_$(d)/b)
+app2.exe_DEPS = app.o $(call subtree_tgts,$(d)/a) $(TARGETS_$(d)/b)
 
 include $(MK)/footer.mk
 # This is just a convenience - to let you know when make has stopped

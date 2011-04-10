@@ -4,7 +4,7 @@ SUBDIRS = ex1 ex2
 
 .PHONY : tar
 tar :
-	tar czf nonrec-make.tgz Makefile Readme.txt mk/*
+	git archive HEAD Makefile Readme.txt mk | gzip > nonrec-make.tgz
 
 include $(MK)/footer.mk
 # This is just a convenience - to let you know when make has stopped
