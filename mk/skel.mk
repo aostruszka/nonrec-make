@@ -123,7 +123,9 @@ parent = $(patsubst %/,%,$(dir $(d)))
 define include_subdir_rules
 dir_stack := $(d) $(dir_stack)
 d := $(d)/$(1)
+include $(MK)/header.mk
 include $(addsuffix /Rules.mk,$$(d))
+include $(MK)/footer.mk
 d := $$(firstword $$(dir_stack))
 dir_stack := $$(wordlist 2,$$(words $$(dir_stack)),$$(dir_stack))
 endef

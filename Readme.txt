@@ -111,44 +111,27 @@ will allow for this project to act as a subproject of some super project
 treating your whole project tree as a subdirectory[2]):
 
 -8<---Rules.top---------------
-1:  include $(MK)/header.mk
-2: 
-3:  TARGETS = app.exe cli.exe
-4:  SUBDIRS = Dir_1 Dir_2
-5: 
-6:  app.exe_DEPS = top_a.o top_b.o main.o $(SUBDIRS_TGTS)
-7:  app.exe_LIBS = -lm
-8:  # Let's use DEFAULT_MAKECMD for app.exe
-9:
-10: cli.exe_DEPS = cli.o cli_dep.o
-11: cli.exe_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
-12: 
-13: include $(MK)/footer.mk
-14: # This is just a convenience - to let you know when make has stopped
-15: # interpreting make files and started their execution.
-16: $(info Rules generated...)
+1:  TARGETS = app.exe cli.exe
+2:  SUBDIRS = Dir_1 Dir_2
+3:
+4:  app.exe_DEPS = top_a.o top_b.o main.o $(SUBDIRS_TGTS)
+5:  app.exe_LIBS = -lm
+6:  # Let's use DEFAULT_MAKECMD for app.exe
+7:
+8:  cli.exe_DEPS = cli.o cli_dep.o
+9:  cli.exe_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
 -8<---------------------------
 
-Lines 1 & 13 are a must :) - this is where everything happens.  Lines
-14+ are there just to let you know how fast make parses the makefiles
-and how long it takes to scan all dependencies :).
-
-Line 3 - this directory has two targets that should be built.
-Line 4 - this directory has two subdirectories that should be scanned
-Line 6 - app.exe depends on ... (SUBDIRS_TGTS is a variable that
+Line 1 - this directory has two targets that should be built.
+Line 2 - this directory has two subdirectories that should be scanned
+Line 4 - app.exe depends on ... (SUBDIRS_TGTS is a variable that
 	 contains all the targets from the subdirectories mentioned at
 	 line 4)
-Line 7 - app.exe should be linked with math library
-Line 8 - app.exe will be built with default "rule"
-Line 10 - cli.exe depends on ... and
-Line 11 - use the following command to build it (notice $(^R) instead of
-	  $^ - see below)
-Line 16 - The comment above this line tries to explain its purpose.
-	  I find it helpful to know when make has read all the make
-	  files and started to scan resulting dependency graph for
-	  necessary updates so I put this at the end in the rules of
-	  the top directory (Rules.top - there's no need for this in
-	  other directories).
+Line 5 - app.exe should be linked with math library
+Line 6 - app.exe will be built with default "rule"
+Line 8 - cli.exe depends on ... and
+Line 9 - use the following command to build it (notice $(^R) instead of
+	 $^ - see below)
 
 You can specify the targets for current directory in two ways:
 1. Give them in TARGETS.  Each target can have it's own *_DEPS, *_LIBS
@@ -158,14 +141,10 @@ You can specify the targets for current directory in two ways:
 2. The targets are simply objects - or in more general files that
   match patterns in AUTO_TGTS, and have appropriate rules in 'skeleton'.
   In that case you can list them in OBJS or SRCS like e.g. in Rules.mk
-  from Dir_1a 
+  from Dir_1a
 
 -8<---Dir_2/Dir_2a/Rules.mk---
-1: include $(MK)/header.mk
-2: 
-3: SRCS := dir_2a_file1.c dir_2a_file2.c dir_2a_file3.c
-4: 
-5: include $(MK)/footer.mk
+1: SRCS := dir_2a_file1.c dir_2a_file2.c dir_2a_file3.c
 -8<---------------------------
 
 There are "reserved" variables that you should not modify.  Most notably:
@@ -361,7 +340,9 @@ to the directory of the target or prerequisite you should rely on
 automatic variables (@, <, ...) and built in functions (dir, notdir,
 ...).
 
-Every Rules.mk (or Rules.top) need to include header.mk and footer.mk.
+Every Rules.mk (or Rules.top) need to be included in cooperation with
+header.mk and footer.mk.  This is now done automatically but in older
+versions this was not so and user had to include them manually.
 The main purpose of header is to clear all variables that you can use
 inside Rules.mk so that values set in one rules file does not propagate
 to other.  In addition at the top level it sets the $(d) variable (which
@@ -376,7 +357,7 @@ addition it includes:
   if you want to add a rule that builds %.o out of %.m4 (by running m4
   preprocessor before passing the contents of file to CC) just put it in
   here.
-  
+
 skel.mk also defines some functions like save_vars and tgt_rule
 which are called in the footer.mk.  Take a look into make manual for the
 way the functions are defined and called if you're not familiar with it.

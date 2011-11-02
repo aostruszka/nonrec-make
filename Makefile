@@ -25,4 +25,10 @@ MK := $(TOP)/mk
 clean : clean_$(RUNDIR)
 clean_tree : clean_tree_$(RUNDIR)
 
+include $(MK)/header.mk
 include $(TOP)/Rules.top
+include $(MK)/footer.mk
+
+# This is just a convenience - to let you know when make has stopped
+# interpreting make files and started their execution.
+$(info Rules generated...)
