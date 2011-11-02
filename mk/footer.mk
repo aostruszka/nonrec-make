@@ -70,13 +70,17 @@ $(foreach vd,$(SRCS_VPATH),$(eval $(call skeleton,$(d)/$(vd))))
 # Target rules for all "non automatic" targets
 $(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS_$(d))),$(eval $(call tgt_rule,$(tgt))))
 
+# Way to build all targets in given subtree (not just current dir as via
+# dir_$(d) - see below)
+tree_$(d) : $(call subtree_tgts,$(d))
+
 # If the directory is just for grouping its targets will be targets from
 # all subdirectories
 ifeq ($(strip $(TARGETS_$(d))),)
 TARGETS_$(d) := $(SUBDIRS_TGTS)
 endif
 
-endif
-
 # This is a default rule - see Makefile
 dir_$(d) : $(TARGETS_$(d))
+
+endif
