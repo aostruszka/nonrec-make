@@ -163,6 +163,13 @@ simply say in Rules.mk:
 
 SRCS := *.c
 
+If you have directory with large number of files where simple glob is
+what you want to use in SRCS but there are some files that you'd like to
+exclude just list them in SRCS_EXCLUDES :) - this is a list of makefile
+patterns e.g.
+
+SRCS_EXCLUDES := extra% test%
+
 Of course you can use the built in make wildcards but you should do that
 as follows:
 

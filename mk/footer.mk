@@ -7,6 +7,7 @@ else # Populate OBJS_ from SRCS
 # Expand wildcards in SRCS if they are given
 ifneq ($(or $(findstring *,$(SRCS)),$(findstring ?,$(SRCS)),$(findstring ],$(SRCS))),)
   SRCS := $(notdir $(foreach sd,. $(SRCS_VPATH),$(wildcard $(addprefix $(d)/$(sd)/,$(SRCS)))))
+  SRCS := $(filter-out $(SRCS_EXCLUDES), $(SRCS))
 endif
 
 OBJS_$(d) := $(addprefix $(OBJPATH)/,$(addsuffix .o,$(basename $(SRCS))))

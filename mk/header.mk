@@ -7,6 +7,7 @@ include $(MK)/skel.mk
 endif
 
 SRCS :=
+SRCS_EXCLUDES :=
 OBJS :=
 CLEAN :=
 TARGETS :=
