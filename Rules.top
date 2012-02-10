@@ -1,7 +1,9 @@
 SUBDIRS = ex1 ex2
 
-.PHONY : tar
-tar :
-	git archive HEAD Makefile Readme.txt mk | gzip > nonrec-make.tgz
+.PHONY : tar tar-%
+
+tar : tar-HEAD
+tar-% :
+	git archive $(subst tar-,,$@) Makefile Readme.txt mk | gzip > nonrec-make.tgz
 
 # vim: set ft=make :
