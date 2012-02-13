@@ -12,10 +12,10 @@
 # and this will get expanded properly during compilation (see e.g. COMPILE.c)
 # Of course you can still use the target specific variables if you want
 # to have special setting for just one target and not the whole
-# directory.
-DIR_INCLUDES = $(addprefix -I,$(INCLUDES_$(<D)))
-DIR_CFLAGS = $(CFLAGS_$(<D))
-DIR_CXXFLAGS = $(CXXFLAGS_$(<D))
+# directory.  See below for definition of @RD variable.
+DIR_INCLUDES = $(addprefix -I,$(INCLUDES_$(@RD)))
+DIR_CFLAGS = $(CFLAGS_$(@RD))
+DIR_CXXFLAGS = $(CXXFLAGS_$(@RD))
 
 CFLAGS = -g -W -Wall $(DIR_CFLAGS)
 CXXFLAGS = -g -W -Wall $(DIR_CXXFLAGS)
@@ -36,7 +36,7 @@ CPPFLAGS = -MMD -D_REENTRANT -D_POSIX_C_SOURCE=200112L -D__EXTENSIONS__ \
 # Linker flags.  The values below will use what you've specified for
 # particular target or directory but if you have some flags or libraries
 # that should be used for all targets/directories just append them at end.
-LDFLAGS = $(LDFLAGS_$(@)) $(addprefix -L,$(LIBDIRS_$(subst /$(OBJDIR),,$(@D))))
+LDFLAGS = $(LDFLAGS_$(@)) $(addprefix -L,$(LIBDIRS_$(@RD)))
 LDLIBS = $(LIBS_$(@))
 
 ############# This is the end of generic flags #############
@@ -96,6 +96,16 @@ OBJPATH = $(d)/$(OBJDIR)
 # corresponding source file will be searched in some/dir and in
 # some/dir/{x,y,z,...} where "x y z ..." is value of this variable.
 SRCS_VPATH := src
+
+# Target "real directory" - this is used above already and is most
+# reliable way to refer to "per directory flags".  In theory one could
+# use automatic variable already defined by make "<D" but this will not
+# work well when somebody uses SRCS_VPATH variable.  Make defines also
+# "@D" but I'm not using it since I would have to strip OBJDIR anyway
+# and the value below is just silightly modified definition of what @D
+# is (I assume that since make is using patsubst then subst for
+# definition of @D then this is just "better").
+@RD = $(patsubst %/$(OBJDIR)/,%,$(dir $@))
 
 # These are commands that are used to update the target.  If you have
 # a target that make handles with built in rules just add its pattern to

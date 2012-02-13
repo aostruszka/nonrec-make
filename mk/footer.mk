@@ -15,8 +15,6 @@ endif
 
 CLEAN_$(d) := $(CLEAN_$(d)) $(addprefix $(d)/,$(CLEAN))
 
-$(foreach sd,$(SRCS_VPATH),$(eval INCLUDES_$(d)/$(sd) := $(or $(INCLUDES_$(d)/$(sd)),$(INCLUDES_$(d)))))
-
 ifdef TARGETS
 TARGETS_$(d) := $(addprefix $(OBJPATH)/,$(TARGETS))
 $(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS)),$(eval $(call save_vars,$(tgt))))

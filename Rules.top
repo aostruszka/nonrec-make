@@ -1,7 +1,8 @@
 SUBDIRS = ex1 ex2
 
 .PHONY : tar tar-%
-
+# To get ID from a tar archive just run:
+#   zcat nonrec-make.tgz | git get-tar-commit-id
 tar : tar-HEAD
 tar-% :
 	git archive $(subst tar-,,$@) Makefile Readme.txt mk | gzip > nonrec-make.tgz
