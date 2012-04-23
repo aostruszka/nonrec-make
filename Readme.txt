@@ -282,11 +282,13 @@ to the directory where Rules.mk is).
 In addition to those each dir has "it's own" targets.  These are:
 
 1) dir_<directory_path>
-   which builds all targets in given directory
-2) clean_<directory_path>
+   which builds all targets in given directory plus its dependencies
+2) tree_<directory_path>
+   which builds all targets in subtree starting at directory given
+3) clean_<directory_path>
    which removes all "products" from the $(OBJDIR) subdirectory of
    current directory
-3) clean_tree_<directory_path>
+4) clean_tree_<directory_path>
    which does clean_<directory_path> and the same for each its
    subdirectory
 
@@ -304,6 +306,8 @@ Then:
    several subdirectories in one directory) then simple 'make' in this
    directory - instead of doing nothing - will build targets of all its
    subdirectories.
+* 'make tree' (same as 'make tree_$(pwd)')
+   rebuilds everything in given subtree
 * 'make clean' (same as 'make clean_$(pwd)')
    removes everything from Dir_1/obj/
 * 'make clean_tree (same as 'make clean_tree_$(pwd)')

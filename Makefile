@@ -21,7 +21,11 @@ MK := $(TOP)/mk
 
 .PHONY: all clean clean_all clean_tree
 
+# By default build only targets from this directory (and its dependencies)
 .DEFAULT_GOAL := dir_$(RUNDIR)
+# A shortcut to build whole subtree
+tree : tree_$(RUNDIR)
+
 clean : clean_$(RUNDIR)
 clean_tree : clean_tree_$(RUNDIR)
 

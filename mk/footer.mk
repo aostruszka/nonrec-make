@@ -71,7 +71,7 @@ $(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS_$(d))),$(eval $(call tgt_rule,
 
 # Way to build all targets in given subtree (not just current dir as via
 # dir_$(d) - see below)
-tree_$(d) : $(call subtree_tgts,$(d))
+tree_$(d) : $(TARGETS_$(d)) $(foreach sd,$(SUBDIRS_$(d)),tree_$(sd))
 
 # If the directory is just for grouping its targets will be targets from
 # all subdirectories
