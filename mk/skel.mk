@@ -14,6 +14,7 @@
 # to have special setting for just one target and not the whole
 # directory.  See below for definition of @RD variable.
 DIR_INCLUDES = $(addprefix -I,$(INCLUDES_$(@RD)))
+DIR_CPPFLAGS = $(CPPFLAGS_$(@RD))
 DIR_CFLAGS = $(CFLAGS_$(@RD))
 DIR_CXXFLAGS = $(CXXFLAGS_$(@RD))
 
@@ -31,7 +32,7 @@ INCLUDES :=
 # Note that I'm adding DIR_INCLUDES before INCLUDES so that they have
 # precedence.
 CPPFLAGS = -MMD -D_REENTRANT -D_POSIX_C_SOURCE=200112L -D__EXTENSIONS__ \
-	   -DDEBUG $(DIR_INCLUDES) $(addprefix -I,$(INCLUDES))
+	   -DDEBUG $(DIR_CPPFLAGS) $(DIR_INCLUDES) $(addprefix -I,$(INCLUDES))
 
 # Linker flags.  The values below will use what you've specified for
 # particular target or directory but if you have some flags or libraries
@@ -103,7 +104,7 @@ SRCS_VPATH := src
 # work well when somebody uses SRCS_VPATH variable.  Make defines also
 # "@D" but I'm not using it since I would have to strip OBJDIR anyway
 # and the value below is just silightly modified definition of what @D
-# is (I assume that since make is using patsubst then subst for
+# is (I assume that since make is using patsubst rather than subst for
 # definition of @D then this is just "better").
 @RD = $(patsubst %/$(OBJDIR)/,%,$(dir $@))
 
