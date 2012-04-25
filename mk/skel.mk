@@ -58,7 +58,7 @@ else
 endif
 
 # ... and here's a good place to translate some of these settings into
-# compilation flags/variables.  As an example a preprocesor macro for
+# compilation flags/variables.  As an example a preprocessor macro for
 # target endianess
 ifeq ($(ENDIAN),big)
   CPPFLAGS += -DBIG_ENDIAN
@@ -109,7 +109,7 @@ SRCS_VPATH := src
 # use automatic variable already defined by make "<D" but this will not
 # work well when somebody uses SRCS_VPATH variable.  Make defines also
 # "@D" but I'm not using it since I would have to strip OBJDIR anyway
-# and the value below is just silightly modified definition of what @D
+# and the value below is just slightly modified definition of what @D
 # is (I assume that since make is using patsubst rather than subst for
 # definition of @D then this is just "better").
 @RD = $(patsubst %/$(OBJDIR)/,%,$(dir $@))
@@ -119,10 +119,10 @@ SRCS_VPATH := src
 # the AUTO_TGTS below.  Otherwise you have to supply the command and you
 # can either do it explicitly with _CMD variable or based on the
 # target's suffix and corresponding MAKECMD variable.  For example %.a
-# are # updated by MAKECMD.a (examplary setting below).  If the target
+# are # updated by MAKECMD.a (exemplary setting below).  If the target
 # is not filtered out by AUTO_TGTS and there's neither _CMD nor suffix
 # specific command to build the target DEFAULT_MAKECMD is used.  See
-# skel.mk for the explanation of the R versions of ? and ^ variables.
+# above for the explanation of the R versions of ? and ^ variables.
 MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(?R) && $(RANLIB) $@
 MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -shared -o $@
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
