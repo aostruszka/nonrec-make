@@ -24,21 +24,22 @@ endif
 
 $(foreach sd,$(SUBDIRS),$(eval $(call include_subdir_rules,$(sd))))
 
-.PHONY: dir_$(d) clean_$(d) clean_extra_$(d) clean_tree_$(d)
+.PHONY: dir_$(d) clean_$(d) clean_extra_$(d) clean_tree_$(d) dist_clean_$(d)
 .SECONDARY: $(OBJPATH)/.fake_file
 
 # Whole tree targets
 all :: $(TARGETS_$(d))
 
 clean_all :: clean_$(d)
+dist_clean :: dist_clean_$(d)
 
 # No point to enforce clean_extra dependency if CLEAN is empty
 ifeq ($(strip $(CLEAN_$(d))),)
-dist_clean :: $(OBJPATH)/.fake_file
+dist_clean_$(d) :
 else
-dist_clean :: $(OBJPATH)/.fake_file clean_extra_$(d)
+dist_clean_$(d) : clean_extra_$(d)
 endif
-	rm -rf $(<D)
+	rm -rf $(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
 
 #### Per directory targets ####
 
