@@ -19,11 +19,17 @@ endif
 
 MK := $(TOP)/mk
 
-.PHONY: all clean clean_all clean_tree
+.PHONY: dir tree all clean clean_all clean_tree dist_clean
 
-# By default build only targets from this directory (and its dependencies)
-.DEFAULT_GOAL := dir_$(RUNDIR)
-# A shortcut to build whole subtree
+# Default target when nothing is given on the command line.  Reasonable
+# options are:
+# "dir"  - updates only targets from current directory and its dependencies
+# "tree" - updates targets (and their dependencies) in whole subtree
+#          starting at current directory
+# "all"  - updates all targets in the project
+.DEFAULT_GOAL := dir
+
+dir : dir_$(RUNDIR)
 tree : tree_$(RUNDIR)
 
 clean : clean_$(RUNDIR)
