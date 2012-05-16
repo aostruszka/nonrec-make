@@ -1,2 +1,2 @@
-TARGETS = 2.o $(SUBDIRS_TGTS)
+SRCS := *.c
 SUBDIRS := x y

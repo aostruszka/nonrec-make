@@ -1,2 +1,2 @@
-TARGETS = a.o
+TARGETS := a.o
 SUBDIRS := 1 2
