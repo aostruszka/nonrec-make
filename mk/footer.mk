@@ -22,6 +22,17 @@ else
 TARGETS_$(d) := $(OBJS_$(d))
 endif
 
+INSTALL_BIN_$(d) := $(addprefix $(OBJPATH)/,$(INSTALL_BIN))
+INSTALL_LIB_$(d) := $(addprefix $(OBJPATH)/,$(INSTALL_LIB))
+# Documentation is a bit special since it usually is not generated and
+# if it is then most probably not in OBJDIR so I'm prefixing it with
+# current directory iff it is not absolute path
+INSTALL_DOC_$(d) := $(filter /%,$(INSTALL_DOC)) $(addprefix $(d)/,$(filter-out /%,$(INSTALL_DOC)))
+
+########################################################################
+# Inclusion of subdirectories rules - only after this line one can     #
+# refer to subdirectory targets and so on.                             #
+########################################################################
 $(foreach sd,$(SUBDIRS),$(eval $(call include_subdir_rules,$(sd))))
 
 .PHONY: dir_$(d) clean_$(d) clean_extra_$(d) clean_tree_$(d) dist_clean_$(d)

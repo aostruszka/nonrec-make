@@ -39,6 +39,9 @@ include $(MK)/header.mk
 include $(TOP)/Rules.top
 include $(MK)/footer.mk
 
+# Optional final makefile where you can specify additional targets
+-include $(TOP)/final.mk
+
 # This is just a convenience - to let you know when make has stopped
 # interpreting make files and started their execution.
 $(info Rules generated...)
