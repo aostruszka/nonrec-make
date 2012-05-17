@@ -12,8 +12,10 @@ HOST_ARCH := $(BUILD_ARCH)
 # building - if you're cross compiling then you should set this manually
 ENDIAN := $(shell perl -le 'print unpack(N,pack(L,0x01020304)) == 0x01020304 ? big : little')
 
-# Make the compiler invocation lines terse
-VERBOSE := false
+# Make the compiler invocation lines verbose - if it is not defined or
+# set to value other then "true" you'll see just indication of what is
+# being compiled (without details about options)
+#VERBOSE := true
 
 # Uncomment if you don't like coloring of the output
 #COLOR_TTY := false

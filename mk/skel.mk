@@ -163,7 +163,7 @@ $(1): $$(abs_deps) $(OBJPATH)/.fake_file
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef
 
-# subtree_tgts is now just a special case for more general get_subtree
+# subtree_tgts is now just a special case of a more general get_subtree
 # macro since $(call get_subtree,TARGETS,dir) has the same effect but
 # I'm keeping it for backward compatibility
 define subtree_tgts
