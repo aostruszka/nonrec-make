@@ -21,6 +21,8 @@ DIR_CXXFLAGS = $(CXXFLAGS_$(@RD))
 CFLAGS = -g -W -Wall $(DIR_CFLAGS)
 CXXFLAGS = -g -W -Wall $(DIR_CXXFLAGS)
 
+OPT_FLAGS := -O3
+
 # List of includes that all (or at least majority) needs
 INCLUDES :=
 
@@ -32,7 +34,7 @@ INCLUDES :=
 # Note that I'm adding DIR_INCLUDES before INCLUDES so that they have
 # precedence.
 CPPFLAGS = -MMD -D_REENTRANT -D_POSIX_C_SOURCE=200112L -D__EXTENSIONS__ \
-	   -DDEBUG $(DIR_CPPFLAGS) $(DIR_INCLUDES) $(addprefix -I,$(INCLUDES))
+	   $(DIR_CPPFLAGS) $(DIR_INCLUDES) $(addprefix -I,$(INCLUDES))
 
 # Linker flags.  The values below will use what you've specified for
 # particular target or directory but if you have some flags or libraries
@@ -47,6 +49,11 @@ LDFLAGS = $(LDFLAGS_$(@)) $(addprefix -L,$(LIBDIRS_$(@RD)))
 LDLIBS :=
 
 ############# This is the end of generic flags #############
+
+# If this is special build mode then append build specific flags
+ifdef BUILD_MODE
+  -include $(MK)/build-$(BUILD_MODE).mk
+endif
 
 # Now we suck in configuration ...
 include $(MK)/config.mk
@@ -94,7 +101,7 @@ AUTO_TGTS := %.o
 # Where to put the compiled objects.  You can e.g. make it different
 # depending on the target platform (e.g. for cross-compilation a good
 # choice would be OBJDIR := obj/$(HOST_ARCH)) or debugging being on/off.
-OBJDIR := obj
+OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
 OBJPATH = $(d)/$(OBJDIR)
 
 # This variable contains a list of subdirectories where to look for
