@@ -6,6 +6,7 @@ dir_stack :=
 include $(MK)/skel.mk
 endif
 
+# Clear vars used by this make system
 SRCS :=
 SRCS_EXCLUDES :=
 OBJS :=
@@ -13,6 +14,5 @@ CLEAN :=
 TARGETS :=
 SUBDIRS :=
 
-INSTALL_BIN :=
-INSTALL_LIB :=
-INSTALL_DOC :=
+# Clear user vars
+$(foreach v,$(VERB_VARS) $(OBJ_VARS) $(DIR_VARS),$(eval $(v) := ))

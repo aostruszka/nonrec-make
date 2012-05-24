@@ -8,6 +8,36 @@
 # $^ - the names of all dependencies
 
 ########################################################################
+#                        User defined variables                        #
+########################################################################
+
+# VERB_VARS is a list of variables that you'd like to record on per
+# directory level.  So if you set it to say AUTOTEST then each each
+# directory will have it's own AUTOTEST_$(dir) variable with value taken
+# from appropriate Rules.mk
+VERB_VARS :=
+
+# OBJ_VARS - like VERB_VARS but all values taken from Rules.mk have
+# $(OBJPATH) prepended so instead of saying:
+#   INSTALL_$d := $(OBJPATH)/some_target
+# you can say simply
+#   INSTALL := some_target
+OBJ_VARS := INSTALL_BIN INSTALL_LIB
+
+# DIR_VARS - like VERB_VARS but all values taken from Rules.mk have $(d)
+# prepended (unless value is an absolute path) so you can say:
+#   INSTALL_DOC := Readme.txt
+# instead of:
+#   INSTALL_DOC_$d := $(d)/Readme.txt
+DIR_VARS := INSTALL_DOC INSTALL_INC
+
+# NOTE: There is generic macro defined below with which you can get all
+# values of given variable from some subtree e.g.:
+#   $(call get_subtree,INSTALL,dir)
+# will give you value of all INSTALL variables from tree starting at
+# 'dir'
+
+########################################################################
 #                       Directory specific flags                       #
 ########################################################################
 # You just define in Rules.mk say

@@ -22,12 +22,10 @@ else
 TARGETS_$(d) := $(OBJS_$(d))
 endif
 
-INSTALL_BIN_$(d) := $(addprefix $(OBJPATH)/,$(INSTALL_BIN))
-INSTALL_LIB_$(d) := $(addprefix $(OBJPATH)/,$(INSTALL_LIB))
-# Documentation is a bit special since it usually is not generated and
-# if it is then most probably not in OBJDIR so I'm prefixing it with
-# current directory iff it is not absolute path
-INSTALL_DOC_$(d) := $(filter /%,$(INSTALL_DOC)) $(addprefix $(d)/,$(filter-out /%,$(INSTALL_DOC)))
+# Save user defined vars
+$(foreach v,$(VERB_VARS),$(eval $(v)_$(d) := $($v)))
+$(foreach v,$(OBJ_VARS),$(eval $(v)_$(d) := $(addprefix $(OBJPATH)/,$($v))))
+$(foreach v,$(DIR_VARS),$(eval $(v)_$(d) := $(filter /%,$($v)) $(addprefix $(d)/,$(filter-out /%,$($v)))))
 
 ########################################################################
 # Inclusion of subdirectories rules - only after this line one can     #
