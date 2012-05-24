@@ -7,7 +7,10 @@
 # $? - the names of all dependencies that are newer then the target
 # $^ - the names of all dependencies
 
-# Directory specific flags.  You just define in Rules.mk say
+########################################################################
+#                       Directory specific flags                       #
+########################################################################
+# You just define in Rules.mk say
 # INCLUDES_$(d) := ....
 # and this will get expanded properly during compilation (see e.g. COMPILE.c)
 # Of course you can still use the target specific variables if you want
@@ -48,7 +51,9 @@ LDFLAGS = $(LDFLAGS_$(@)) $(addprefix -L,$(LIBDIRS_$(@RD)))
 # suggested :).
 LDLIBS :=
 
-############# This is the end of generic flags #############
+########################################################################
+#                       The end of generic flags                       #
+########################################################################
 
 # If this is special build mode then append build specific flags
 ifdef BUILD_MODE
@@ -77,8 +82,10 @@ endif
 # for shared libraries 
 SOEXT := $(or $(SOEXT),so)
 
-######### A more advanced part - if you change anything below    ######
-######### you should have at least vague idea how this works :D  ######
+########################################################################
+#         A more advanced part - if you change anything below          #
+#         you should have at least vague idea how this works :D        #
+########################################################################
 
 # I define these for convenience - you can use them in your command for
 # updating the target.  Since I'm using fake file dependency to make
@@ -135,8 +142,8 @@ MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
 
 ########################################################################
-# Below is a "Blood sugar sex^H^H^Hmake magik" :) - don't touch it
-# unless you know what you are doing.
+# Below is a "Blood sugar sex^H^H^Hmake magik" :) - don't touch it     #
+# unless you know what you are doing.                                  #
 ########################################################################
 
 # This can be useful.  E.g. if you want to set INCLUDES_$(d) for given

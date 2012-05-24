@@ -52,7 +52,9 @@ dist_clean_$(d) : clean_extra_$(d)
 endif
 	rm -rf $(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
 
-#### Per directory targets ####
+########################################################################
+#                        Per directory targets                         #
+########################################################################
 
 # Again - no point to enforce clean_extra dependency if CLEAN is empty
 ifeq ($(strip $(CLEAN_$(d))),)
