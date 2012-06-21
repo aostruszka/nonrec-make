@@ -8,6 +8,6 @@ tar-% :
 	@commit=$(subst tar-,,$@);\
 	tarname=nonrec-make-$$(git describe --tags $$commit).tgz;\
 	echo Archiving $$commit to $$tarname;\
-	git archive $$commit Makefile Readme.txt mk | gzip > $$tarname
+	git archive $$commit mk | gzip > $$tarname
 
 # vim: set ft=make :
