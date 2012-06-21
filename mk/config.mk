@@ -8,6 +8,17 @@ BUILD_ARCH := $(patsubst MINGW32_%,MinGW,$(patsubst CYGWIN_%,Cygwin,$(shell unam
 # default we are running on the same machine we are building.
 HOST_ARCH := $(BUILD_ARCH)
 
+# Build mode e.g. debug, profile, release.  Build specific mode flags
+# can be entered in $(MK)/build-$(BUILD_MODE).mk file e.g. for debug
+# following seems to be a reasonable contents
+#CFLAGS   += -ggdb
+#CXXFLAGS += -ggdb
+#CPPFLAGS += -DDEBUG
+#LDFLAGS  += -ggdb
+# If you don't plan on having different build modes then just comment
+# below or set it to empty.
+BUILD_MODE := $(or $(BUILD_MODE),debug)
+
 # Again, by default we are running on the same architecture we are
 # building - if you're cross compiling then you should set this manually
 ENDIAN := $(shell perl -le 'print unpack(N,pack(L,0x01020304)) == 0x01020304 ? big : little')

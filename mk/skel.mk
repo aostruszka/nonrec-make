@@ -85,13 +85,14 @@ LDLIBS :=
 #                       The end of generic flags                       #
 ########################################################################
 
-# If this is special build mode then append build specific flags
+# Now we suck in configuration ...
+include $(MK)/config.mk
+
+# ... optional build mode specific flags ...
 ifdef BUILD_MODE
   -include $(MK)/build-$(BUILD_MODE).mk
 endif
 
-# Now we suck in configuration ...
-include $(MK)/config.mk
 # ... host and build specific settings ...
 ifneq ($(wildcard $(MK)/config-$(BUILD_ARCH)_$(HOST_ARCH).mk),)
   include $(MK)/config-$(BUILD_ARCH)_$(HOST_ARCH).mk

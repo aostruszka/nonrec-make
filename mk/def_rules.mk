@@ -31,9 +31,9 @@ endif
 ifneq ($(VERBOSE),true)
 ifeq ($(COLOR_TTY),true)
 echo_prog := $(shell if echo -e | grep -q -- -e; then echo echo; else echo echo -e; fi)
-echo_cmd = @$(echo_prog) "$(COLOR)$(1)$(NOCOLOR)";
+echo_cmd = @$(echo_prog) "$(COLOR)$(subst $(TOP)/,,$(1))$(NOCOLOR)";
 else
-echo_cmd = @echo "$(1)";
+echo_cmd = @echo "$(subst $(TOP)/,,$(1))";
 endif
 else # Verbose output
 echo_cmd =
