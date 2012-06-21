@@ -1,6 +1,6 @@
 # Fill BUILD_ARCH with appropriate value automatically (with some
-# cosmetics in case of Cygwin :)).
-BUILD_ARCH := $(patsubst CYGWIN_%,Cygwin,$(shell uname -s))-$(shell uname -m)
+# cosmetics in case of Cygwin/MinGW :)).
+BUILD_ARCH := $(patsubst MINGW32_%,MinGW,$(patsubst CYGWIN_%,Cygwin,$(shell uname -s)))-$(shell uname -m)
 
 # Target platform (where the code will be executed).  I'm not using
 # TARGET_ARCH for this since this variable is already used in builtin
