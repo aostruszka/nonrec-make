@@ -140,7 +140,12 @@ AUTO_TGTS := %.o
 # depending on the target platform (e.g. for cross-compilation a good
 # choice would be OBJDIR := obj/$(HOST_ARCH)) or debugging being on/off.
 OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
-OBJPATH = $(d)/$(OBJDIR)
+
+# By default OBJDIR is relative to the directory of the corresponding Rules.mk
+# however you can use TOP_BUILD_DIR to build all objects outside of your
+# project tree.
+#TOP_BUILD_DIR := /tmp/make-builddir
+OBJPATH = $(if $(TOP_BUILD_DIR),$(TOP_BUILD_DIR)$(d),$(d))/$(OBJDIR)
 
 # This variable contains a list of subdirectories where to look for
 # sources.  That is if you have some/dir/Rules.mk where you name object
@@ -218,6 +223,13 @@ endef
 define get_subtree
 $($(1)_$(2)) $(foreach sd,$(SUBDIRS_$(2)),$(call get_subtree,$(1),$(sd)))
 endef
+
+# if we are using out of project build tree then there is no need to
+# have dist_clean on per directory level and the one below is enough
+ifneq ($(strip $(TOP_BUILD_DIR)),)
+dist_clean :
+	rm -rf $(TOP_BUILD_DIR)$(TOP)
+endif
 
 # Suck in the default rules
 include $(MK)/def_rules.mk

@@ -47,6 +47,9 @@ $(foreach sd,$(SUBDIRS),$(eval $(call include_subdir_rules,$(sd))))
 all :: $(TARGETS_$(d))
 
 clean_all :: clean_$(d)
+
+# dist_clean is optimized in skel.mk if we are building in out of project tree
+ifeq ($(strip $(TOP_BUILD_DIR)),)
 dist_clean :: dist_clean_$(d)
 
 # No point to enforce clean_extra dependency if CLEAN is empty
@@ -55,7 +58,8 @@ dist_clean_$(d) :
 else
 dist_clean_$(d) : clean_extra_$(d)
 endif
-	rm -rf $(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
+	rm -rf $(TOP_BUILD_DIR)$(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
+endif
 
 ########################################################################
 #                        Per directory targets                         #
@@ -67,8 +71,11 @@ clean_$(d) :
 else
 clean_$(d) : clean_extra_$(d)
 endif
-	rm -f $(subst clean_,,$@)/$(OBJDIR)/*
+	rm -f $(TOP_BUILD_DIR)$(subst clean_,,$@)/$(OBJDIR)/*
 
+# clean_extra is meant for the extra output that is generated in source
+# directory (e.g. generated source from lex/yacc) so I'm not using
+# TOP_BUILD_DIR below
 clean_extra_$(d) :
 	rm -f $(CLEAN_$(subst clean_extra_,,$@))
 
