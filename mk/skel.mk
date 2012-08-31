@@ -193,10 +193,10 @@ dir_stack := $$(wordlist 2,$$(words $$(dir_stack)),$$(dir_stack))
 endef
 
 define save_vars
-DEPS_$(OBJPATH)/$(1) = $$($(1)_DEPS)
-LIBS_$(OBJPATH)/$(1) = $$($(1)_LIBS)
-LDFLAGS_$(OBJPATH)/$(1) = $$($(1)_LDFLAGS)
-CMD_$(OBJPATH)/$(1) = $$($(1)_CMD)
+DEPS_$(1)$(2) = $$($(2)_DEPS)
+LIBS_$(1)$(2) = $$($(2)_LIBS)
+LDFLAGS_$(1)$(2) = $$($(2)_LDFLAGS)
+CMD_$(1)$(2) = $$($(2)_CMD)
 endef
 
 define tgt_rule
@@ -204,7 +204,7 @@ abs_deps := $$(filter /%,$$(DEPS_$(1)))
 rel_deps := $$(filter-out /%,$$(DEPS_$(1)))
 abs_deps += $$(addprefix $(OBJPATH)/,$$(rel_deps))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
-$(1): $$(abs_deps) $(OBJPATH)/.fake_file
+$(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),$(OBJPATH)/.fake_file,)
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef
 

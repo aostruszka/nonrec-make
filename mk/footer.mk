@@ -16,8 +16,15 @@ endif
 CLEAN_$(d) := $(CLEAN_$(d)) $(addprefix $(d)/,$(CLEAN))
 
 ifdef TARGETS
-TARGETS_$(d) := $(addprefix $(OBJPATH)/,$(TARGETS))
-$(foreach tgt,$(filter-out $(AUTO_TGTS),$(TARGETS)),$(eval $(call save_vars,$(tgt))))
+abs_tgts := $(filter /%, $(TARGETS))
+rel_tgts := $(filter-out /%,$(TARGETS))
+TARGETS_$(d) := $(abs_tgts) $(addprefix $(OBJPATH)/,$(rel_tgts))
+$(foreach tgt,$(filter-out $(AUTO_TGTS),$(rel_tgts)),$(eval $(call save_vars,$(OBJPATH)/,$(tgt))))
+# Absolute targets are entry points for external (sub)projects which
+# have their own build system - what is really interesting is only CMD
+# and possibly DEPS however I use this general save_vars (two more vars
+# that are not going to be used should not be a problem :P).
+$(foreach tgt,$(abs_tgts),$(eval $(call save_vars,,$(tgt))))
 else
 TARGETS_$(d) := $(OBJS_$(d))
 endif

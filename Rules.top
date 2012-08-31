@@ -1,4 +1,4 @@
-SUBDIRS = ex1 ex2
+SUBDIRS = ex1 ex2 external
 
 .PHONY : tar tar-%
 # To get ID from a tar archive just run:
