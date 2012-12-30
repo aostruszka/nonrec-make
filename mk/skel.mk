@@ -198,10 +198,14 @@ dir_stack := $$(wordlist 2,$$(words $$(dir_stack)),$$(dir_stack))
 endef
 
 define save_vars
-DEPS_$(1)$(2) = $$($(2)_DEPS)
-LIBS_$(1)$(2) = $$($(2)_LIBS)
-LDFLAGS_$(1)$(2) = $$($(2)_LDFLAGS)
-CMD_$(1)$(2) = $$($(2)_CMD)
+DEPS_$(1)$(2) = $(value $(2)_DEPS)
+LIBS_$(1)$(2) = $(value $(2)_LIBS)
+LDFLAGS_$(1)$(2) = $(value $(2)_LDFLAGS)
+CMD_$(1)$(2) = $(value $(2)_CMD)
+$(2)_DEPS =
+$(2)_LIBS =
+$(2)_LDFLAGS =
+$(2)_CMD =
 endef
 
 define tgt_rule

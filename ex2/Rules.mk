@@ -1,4 +1,4 @@
-TARGETS := app2$(EXE)
+TARGETS := app$(EXE)
 SUBDIRS := a b
 
-app2$(EXE)_DEPS = app.o $(call subtree_tgts,$(d)/a) $(TARGETS_$(d)/b)
+app$(EXE)_DEPS = app.o $(call subtree_tgts,$(d)/a) $(TARGETS_$(d)/b)
