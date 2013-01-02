@@ -356,18 +356,41 @@ Have fun!
 case you probably need to spiff it up.  So you'll need to
 digest it first and note [3] is my hand at it :).
 
-[2] There is one limitation that you should be aware.  You should not
-have in your project two "target specific" LIBS, LDFLAGS or CMD
-variables (that is those that are used during second phase of make
-execution) that have the same names!  For example in one part of your
-tree you're generating target abc which has it's abc_CMD and in the
-other part another target that has the same name and also it's own
-command.  In such case the last assignment to abc_CMD will hold and it
-will be used for both targets.  The same goes for LIBS and LDFLAGS.
+[2] There is one limitation that you should be aware.
+Prior to commit 070f681 you should not have in your project two "target
+specific" LIBS, LDFLAGS or CMD variables (that is those that are used
+during second phase of make execution) that have the same names!  For
+example in one part of your tree you're generating target abc which has
+it's abc_CMD and in the other part another target that has the same name
+and also it's own command.  In such case the last assignment to abc_CMD
+will hold and it will be used for both targets.  The same goes for LIBS
+and LDFLAGS.
 
-And this also applies to situation when you would like to use two
+And this also applied to situation when you would like to use two
 subprojects in one larger project.  There should be no clash between
 variables from these subprojects.
+
+Starting with commit 070f681 you can have in your (sub)projects two
+LIBS, LDFLAGS or CMD variables.  However there is a catch here! Since
+these variables are not mandatory (you don't have to provide them for
+each target) in order to differentiate between case where abc_CMD was
+actually given for this instance of abc target from the situation where
+abc_CMD is still visible from previous instance of abc target those
+abc_(LIBS|LDFLAGS|CMD) variables are cleared once their value is
+used/remembered (see save_vars macro in skel.mk). That means referring
+to these variables outside Rules.mk where they were assigned will not
+work (and even in the same Rules.mk they will work only in case of
+simply expanded variables - not recursive). If you have such need I'd
+advice to introduce your own variable and use this variable in all
+places, e.g.:
+
+MATH_LIBS := -lgsl -lgslcblas -lm
+...
+TARGETS := abc
+
+abc_DEPS = ...
+abc_LIBS = $(MATH_LIBS)
+...
 
 [3] You should know that make works in two phases - first it scans the
 makefiles and then it begins their execution (see discussion of
