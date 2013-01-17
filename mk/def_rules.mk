@@ -53,6 +53,14 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 %.E : %
 	$(call echo_cmd,CPP $<) $(CPP) $(CPPFLAGS) -o $@ $<
 
+# Special rule to get easily CPP options for given file.  This can be
+# handy for your code "assistant" (e.g. clang) that needs to know
+# preprocessor options in order to parse file properly.  In that case
+# you can run: make /path/to/foobar.c.CPPFLAGS | tail -1
+# to get effective flags for foobar.c
+%.CPPFLAGS : %
+	@echo $(CPPFLAGS)
+
 # In this build system all objects are in a separate directory and
 # I make sure this directory exists by the dependency on this fake file
 %/$(OBJDIR)/.fake_file:
