@@ -157,12 +157,8 @@ SRCS_VPATH := src
 # Target "real directory" - this is used above already and is most
 # reliable way to refer to "per directory flags".  In theory one could
 # use automatic variable already defined by make "<D" but this will not
-# work well when somebody uses SRCS_VPATH variable.  Make defines also
-# "@D" but I'm not using it since I would have to strip OBJDIR anyway
-# and the value below is just slightly modified definition of what @D
-# is (I assume that since make is using patsubst rather than subst for
-# definition of @D then this is just "better").
-@RD = $(patsubst %/$(OBJDIR)/,%,$(dir $@))
+# work well when somebody uses SRCS_VPATH variable.
+@RD = $(patsubst %/$(OBJDIR),%,$(@D))
 
 # These are commands that are used to update the target.  If you have
 # a target that make handles with built in rules just add its pattern to

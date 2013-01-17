@@ -45,12 +45,12 @@ COMPILE.cc = $(call echo_cmd,CXX $<) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARC
 LINK.c = $(call echo_cmd,LINK $@) $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
-# These two rules are just for running preprocessor and saving the
-# output into the file with .E appended - sometimes this can be handy.
-%.c.E : %.c
-	$(call echo_cmd,CPP $<) $(CPP) $(CPPFLAGS) -o $@ $<
-
-%.cpp.E : %.cpp
+# This rule is just for running C/C++ preprocessor and saving the output
+# into the file with .E appended - sometimes this can be handy.
+# Suffix E comes from -E option to gcc.  Make sure you invoke this rule
+# via full path (e.g.: make $(pwd)/foobar.c.E) if you want to have per
+# directory preprocessor flags included.
+%.E : %
 	$(call echo_cmd,CPP $<) $(CPP) $(CPPFLAGS) -o $@ $<
 
 # In this build system all objects are in a separate directory and
