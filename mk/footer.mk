@@ -77,7 +77,7 @@ endif
 # directory (e.g. generated source from lex/yacc) so I'm not using
 # TOP_BUILD_DIR below
 clean_extra_$(d) :
-	rm -f $(CLEAN_$(subst clean_extra_,,$@))
+	rm -rf $(filter %/,$(CLEAN_$(subst clean_extra_,,$@))); rm -f $(filter-out %/,$(CLEAN_$(subst clean_extra_,,$@)))
 
 clean_tree_$(d) : clean_$(d) $(foreach sd,$(SUBDIRS_$(d)),clean_tree_$(sd))
 
