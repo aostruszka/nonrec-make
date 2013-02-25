@@ -19,6 +19,16 @@ HOST_ARCH := $(BUILD_ARCH)
 # below or set it to empty.
 BUILD_MODE := $(or $(BUILD_MODE),debug)
 
+# To have some per directory setting automatically propagated to all
+# subdirs then uncomment below.  That way you can have all project
+# compiled with "global" settings and easily switch flags for some
+# subtree just by setting per directory settings at the top dir of the
+# subtree.  You may of course overwrite inherited values and you can
+# turn inheritance in some part by just clearing INHERIT_DIR_VARS_$(d)
+# This is a global inheritance flag - you might want to turn it on only
+# in some directory (just set INHERIT_DIR_VARS_$(d) there).
+#INHERIT_DIR_VARS := CPPFLAGS INCLUDES CFLAGS CXXFLAGS
+
 # Again, by default we are running on the same architecture we are
 # building - if you're cross compiling then you should set this manually
 ENDIAN := $(shell perl -le 'print unpack(N,pack(L,0x01020304)) == 0x01020304 ? big : little')

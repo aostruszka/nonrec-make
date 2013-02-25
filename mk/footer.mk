@@ -34,6 +34,12 @@ $(foreach v,$(VERB_VARS),$(eval $(v)_$(d) := $($v)))
 $(foreach v,$(OBJ_VARS),$(eval $(v)_$(d) := $(addprefix $(OBJPATH)/,$($v))))
 $(foreach v,$(DIR_VARS),$(eval $(v)_$(d) := $(filter /%,$($v)) $(addprefix $(d)/,$(filter-out /%,$($v)))))
 
+# Update per directory variables that are automatically inherited
+ifeq ($(origin INHERIT_DIR_VARS_$(d)),undefined)
+  INHERIT_DIR_VARS_$(d) := $(or $(INHERIT_DIR_VARS_$(parent_dir)), $(INHERIT_DIR_VARS))
+endif
+$(foreach v,$(INHERIT_DIR_VARS_$(d)),$(if $($(v)_$(d)),,$(eval $(v)_$(d) := $($(v)_$(parent_dir)))))
+
 ########################################################################
 # Inclusion of subdirectories rules - only after this line one can     #
 # refer to subdirectory targets and so on.                             #

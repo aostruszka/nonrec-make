@@ -40,6 +40,7 @@ DIR_VARS := INSTALL_DOC INSTALL_INC
 ########################################################################
 #                       Directory specific flags                       #
 ########################################################################
+
 # You just define in Rules.mk say
 # INCLUDES_$(d) := ....
 # and this will get expanded properly during compilation (see e.g. COMPILE.c)
@@ -50,6 +51,10 @@ DIR_INCLUDES = $(addprefix -I,$(INCLUDES_$(@RD)))
 DIR_CPPFLAGS = $(CPPFLAGS_$(@RD))
 DIR_CFLAGS = $(CFLAGS_$(@RD))
 DIR_CXXFLAGS = $(CXXFLAGS_$(@RD))
+
+########################################################################
+#                       Global flags/settings                          #
+########################################################################
 
 CFLAGS = -g -W -Wall $(DIR_CFLAGS)
 CXXFLAGS = -g -W -Wall $(DIR_CXXFLAGS)
@@ -180,8 +185,8 @@ DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(
 
 # This can be useful.  E.g. if you want to set INCLUDES_$(d) for given
 # $(d) to the same value as includes for its parent directory plus some
-# add ons then: INCLUDES_$(d) := $(INCLUDES_$(parent)) ...
-parent = $(patsubst %/,%,$(dir $(d)))
+# add ons then: INCLUDES_$(d) := $(INCLUDES_$(parent_dir)) ...
+parent_dir = $(patsubst %/,%,$(dir $(d)))
 
 define include_subdir_rules
 dir_stack := $(d) $(dir_stack)
