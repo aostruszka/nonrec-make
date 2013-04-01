@@ -4,7 +4,7 @@
 # that.  I prefer unresolved version and since simple $(shell pwd) looks
 # nicer than other two I'm sticking with bash :).
 SHELL := /bin/bash
-RUNDIR := $(shell pwd)
+RUNDIR := $(CURDIR)
 ifndef TOP
 TOP := $(shell rd=$(RUNDIR); top=$$rd; \
                until [ -r $$top/Rules.top ]; do \

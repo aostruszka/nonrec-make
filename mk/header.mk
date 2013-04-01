@@ -1,5 +1,5 @@
 ifndef d
-d := $(or $(TOP),$(shell pwd))
+d := $(or $(TOP),$(CURDIR))
 dir_stack :=
 # Automatic inclusion of the skel.mk at the top level - that way
 # Rules.top has exactly the same structure as other Rules.mk
