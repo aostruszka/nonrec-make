@@ -32,6 +32,15 @@ tree : tree_$(RUNDIR)
 clean : clean_$(RUNDIR)
 clean_tree : clean_tree_$(RUNDIR)
 
+# $(d) keeps the path of "current" directory during tree traversal and
+# $(dir_stack) is used for backtracking during traversal
+d := $(TOP)
+dir_stack :=
+
+# Automatic inclusion of the skel.mk at the top level - that way
+# Rules.top has exactly the same structure as other Rules.mk
+include $(MK)/skel.mk
+
 include $(MK)/header.mk
 include $(TOP)/Rules.top
 include $(MK)/footer.mk
@@ -41,4 +50,4 @@ include $(MK)/footer.mk
 
 # This is just a convenience - to let you know when make has stopped
 # interpreting make files and started their execution.
-$(info Rules generated $(if $(BUILD_MODE),for $(BUILD_MODE),)...)
+$(info Rules generated $(if $(BUILD_MODE),for "$(BUILD_MODE)" mode,)...)
