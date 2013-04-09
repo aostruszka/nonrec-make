@@ -6,15 +6,12 @@
 SHELL := /bin/bash
 RUNDIR := $(shell pwd)
 ifndef TOP
-TOP := $(shell rd=$(RUNDIR); top=$$rd; \
-               until [ -r $$top/Rules.top ]; do \
-                 oldtop=$$top; \
-                 cd ..; top=`pwd`; \
-                 if [ $$oldtop = $$top ]; then \
-                   top=$$rd; break; \
-                 fi; \
-               done; \
-               echo $$top)
+TOP := $(shell \
+       top=$(RUNDIR); \
+       while [ ! -r "$$top/Rules.top" ] && [ "$$top" != "" ]; do \
+           top=$${top%/*}; \
+       done; \
+       echo $$top)
 endif
 
 MK := $(TOP)/mk
