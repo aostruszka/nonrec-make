@@ -37,13 +37,16 @@ clean_tree : clean_tree_$(RUNDIR)
 d := $(TOP)
 dir_stack :=
 
+include $(MK)/header.mk
+include $(MK)/footer.mk
+
 # Automatic inclusion of the skel.mk at the top level - that way
 # Rules.top has exactly the same structure as other Rules.mk
 include $(MK)/skel.mk
 
-include $(MK)/header.mk
+$(eval $(value HEADER))
 include $(TOP)/Rules.top
-include $(MK)/footer.mk
+$(eval $(value FOOTER))
 
 # Optional final makefile where you can specify additional targets
 -include $(TOP)/final.mk

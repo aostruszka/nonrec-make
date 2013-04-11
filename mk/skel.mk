@@ -191,9 +191,9 @@ parent_dir = $(patsubst %/,%,$(dir $(d)))
 define include_subdir_rules
 dir_stack := $(d) $(dir_stack)
 d := $(d)/$(1)
-include $(MK)/header.mk
+$$(eval $$(value HEADER))
 include $(addsuffix /Rules.mk,$$(d))
-include $(MK)/footer.mk
+$$(eval $$(value FOOTER))
 d := $$(firstword $$(dir_stack))
 dir_stack := $$(wordlist 2,$$(words $$(dir_stack)),$$(dir_stack))
 endef

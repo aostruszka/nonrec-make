@@ -1,3 +1,4 @@
+define FOOTER
 SUBDIRS_$(d) := $(patsubst %/,%,$(addprefix $(d)/,$(SUBDIRS)))
 
 ifneq ($(strip $(OBJS)),)
@@ -115,3 +116,4 @@ endif
 dir_$(d) : $(TARGETS_$(d))
 
 endif
+endef
