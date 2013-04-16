@@ -210,9 +210,7 @@ $(2)_CMD =
 endef
 
 define tgt_rule
-abs_deps := $$(filter /%,$$(DEPS_$(1)))
-rel_deps := $$(filter-out /%,$$(DEPS_$(1)))
-abs_deps += $$(addprefix $(OBJPATH)/,$$(rel_deps))
+abs_deps := $$(foreach dep,$$(DEPS_$(1)),$$(if $$(filter /%,$$(dep)),$$(dep),$$(addprefix $(OBJPATH)/,$$(dep))))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
 $(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),| $(OBJPATH),)
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
