@@ -14,7 +14,7 @@ endif
 OBJS_$(d) := $(addprefix $(OBJPATH)/,$(addsuffix .o,$(basename $(SRCS))))
 endif
 
-CLEAN_$(d) := $(CLEAN_$(d)) $(addprefix $(d)/,$(CLEAN))
+CLEAN_$(d) := $(CLEAN_$(d)) $(filter /%,$(CLEAN) $(TARGETS)) $(addprefix $(d)/,$(filter-out /%,$(CLEAN)))
 
 ifdef TARGETS
 abs_tgts := $(filter /%, $(TARGETS))
