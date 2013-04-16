@@ -129,8 +129,8 @@ DEP_OBJS = $(filter %.o, $^)
 DEP_ARCH = $(filter %.a, $^)
 DEP_LIBS = $(addprefix -L,$(dir $(filter %.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter %.$(SOEXT), $^)))
 
-# Kept for backward capability - you should stop using these since I'm
-# now not dependend on $(OBJDIR)/.fake_file any more
+# Kept for backward compatibility - you should stop using these since
+# I'm now not dependent on $(OBJDIR)/.fake_file any more
 ?R = $?
 ^R = $^
 
