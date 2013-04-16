@@ -48,7 +48,7 @@ $(foreach v,$(INHERIT_DIR_VARS_$(d)),$(if $($(v)_$(d)),,$(eval $(v)_$(d) := $($(
 $(foreach sd,$(SUBDIRS),$(eval $(call include_subdir_rules,$(sd))))
 
 .PHONY: dir_$(d) clean_$(d) clean_extra_$(d) clean_tree_$(d) dist_clean_$(d)
-.SECONDARY: $(OBJPATH)/.fake_file
+.SECONDARY: $(OBJPATH)
 
 # Whole tree targets
 all :: $(TARGETS_$(d))

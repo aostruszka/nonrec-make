@@ -61,10 +61,9 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 %.CPPFLAGS : %
 	@echo $(CPPFLAGS)
 
-# In this build system all objects are in a separate directory and
-# I make sure this directory exists by the dependency on this fake file
-%/$(OBJDIR)/.fake_file:
-	@[ -d $(dir $@) ] || mkdir -p $(dir $@); touch $@
+# Create the output directory for build targets.
+%/$(OBJDIR):
+	@mkdir -p $@
 
 # Generic rules.  Again, since the output is in different directory than
 # source files I cannot count on the built in make rules.  So I keep
@@ -81,19 +80,19 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 # COMPILE.cmo.ml = $(call echo_cmd,CAML $<) $(CAML) -c
 # COMPILE.cmx.ml = $(call echo_cmd,CAMLOPT $<) $(CAMLOPT) -c
 # together with corresponding two entries in 'skeleton' below:
-# $(OBJPATH)/%.cmo $(OBJPATH)/%.cmx: $(1)/%.ml $(OBJPATH)/.fake_file
+# $(OBJPATH)/%.cmo $(OBJPATH)/%.cmx: $(1)/%.ml | $(OBJPATH)
 # 	$(value COMPILECMD_TD)
 
 COMPILECMD = $(COMPILE$(suffix $<)) -o $@ $<
 COMPILECMD_TD = $(COMPILE$(suffix $@)$(suffix $<)) -o $@ $<
 
 define skeleton
-$(OBJPATH)/%.o: $(1)/%.cpp $(OBJPATH)/.fake_file
+$(OBJPATH)/%.o: $(1)/%.cpp | $(OBJPATH)
 	$(value COMPILECMD)
 
-$(OBJPATH)/%.o: $(1)/%.cc $(OBJPATH)/.fake_file
+$(OBJPATH)/%.o: $(1)/%.cc | $(OBJPATH)
 	$(value COMPILECMD)
 
-$(OBJPATH)/%.o: $(1)/%.c $(OBJPATH)/.fake_file
+$(OBJPATH)/%.o: $(1)/%.c | $(OBJPATH)
 	$(value COMPILECMD)
 endef

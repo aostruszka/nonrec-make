@@ -124,14 +124,15 @@ SOEXT := $(or $(SOEXT),so)
 ########################################################################
 
 # I define these for convenience - you can use them in your command for
-# updating the target.  Since I'm using fake file dependency to make
-# sure the OBJDIR exists I filter it out here.  Mnemonic for these
-# ? ^ versions is Real (that is not fake :))
+# updating the target.
 DEP_OBJS = $(filter %.o, $^)
 DEP_ARCH = $(filter %.a, $^)
 DEP_LIBS = $(addprefix -L,$(dir $(filter %.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter %.$(SOEXT), $^)))
-?R = $(filter-out %/.fake_file,$?)
-^R = $(filter-out %/.fake_file,$^)
+
+# Kept for backward capability - you should stop using these since I'm
+# now not dependend on $(OBJDIR)/.fake_file any more
+?R = $?
+^R = $^
 
 # Targets that match this pattern (make pattern) will use rules defined
 # in:
@@ -172,9 +173,8 @@ SRCS_VPATH := src
 # target's suffix and corresponding MAKECMD variable.  For example %.a
 # are # updated by MAKECMD.a (exemplary setting below).  If the target
 # is not filtered out by AUTO_TGTS and there's neither _CMD nor suffix
-# specific command to build the target DEFAULT_MAKECMD is used.  See
-# above for the explanation of the R versions of ? and ^ variables.
-MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(?R) && $(RANLIB) $@
+# specific command to build the target DEFAULT_MAKECMD is used.
+MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $? && $(RANLIB) $@
 MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -shared -o $@
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
 
@@ -214,7 +214,7 @@ abs_deps := $$(filter /%,$$(DEPS_$(1)))
 rel_deps := $$(filter-out /%,$$(DEPS_$(1)))
 abs_deps += $$(addprefix $(OBJPATH)/,$$(rel_deps))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
-$(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),$(OBJPATH)/.fake_file,)
+$(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),| $(OBJPATH),)
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
 endef
 
