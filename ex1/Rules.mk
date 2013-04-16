@@ -9,4 +9,4 @@ app$(EXE)_LIBS = -lm
 # Let's use DEFAULT_MAKECMD for app$(EXE)
 
 cli$(EXE)_DEPS = cli.o cli_dep.o
-cli$(EXE)_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
+cli$(EXE)_CMD = $(LINK.c) $^ $(LDLIBS) -o $@

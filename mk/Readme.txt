@@ -146,7 +146,7 @@ treating your whole project tree as a subdirectory[2]):
 6:  # Let's use DEFAULT_MAKECMD for app.exe
 7:
 8:  cli.exe_DEPS = cli.o cli_dep.o
-9:  cli.exe_CMD = $(LINK.c) $(^R) $(LDLIBS) -o $@
+9:  cli.exe_CMD = $(LINK.c) $^ $(LDLIBS) -o $@
 -8<---------------------------
 
 Line 1 - this directory has two targets that should be built.
@@ -157,8 +157,7 @@ Line 4 - app.exe depends on ... (SUBDIRS_TGTS is a variable that
 Line 5 - app.exe should be linked with math library
 Line 6 - app.exe will be built with default "rule"
 Line 8 - cli.exe depends on ... and
-Line 9 - use the following command to build it (notice $(^R) instead of
-	 $^ - see below)
+Line 9 - use the following command to build it
 
 You can specify the targets for current directory in two ways:
 1. Give them in TARGETS.  Each target can have it's own *_DEPS, *_LIBS
