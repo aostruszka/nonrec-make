@@ -65,12 +65,21 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 %/$(OBJDIR):
 	@mkdir -p $@
 
-# Generic rules.  Again, since the output is in different directory than
-# source files I cannot count on the built in make rules.  So I keep
-# them in a "macro" that is expanded for every directory with Rules.mk
-# (and its SRCS_VPATH subdirectories).  This compile command should be
-# generic for most compilers - you should just define its COMPILE
-# variable.
+# Automatic rules.  Again, since the output is in different directory
+# than source files I cannot count on the built in make rules.  So
+# I keep them in a "macro" (see 'skeleton' below) that is expanded for
+# every directory with Rules.mk (and its SRCS_VPATH subdirectories).
+# Below setting means that %.o are made from %.cpp and the same for .cc
+# and .c - this is just the list of mappings.
+# You can add your own here.  For example to add support for Fortran you
+# would just append ".o:.f" and set COMPILE.f (actually make already
+# defines it - just take a look at output of "make -p")
+AUTO_RULES := .o:.cpp .o:.cc .o:.c
+
+# This compile command should be generic for most compilers - you should
+# just define appropriate COMPILE.suffix variable.
+COMPILECMD = $(COMPILE$(suffix $<)) -o $@ $<
+
 # In cases where from one source different types of objects can be
 # generated I have added COMPILECMD_TD (TD stands for "target
 # dependent").  So e.g. for OCaml one could use:
@@ -79,20 +88,27 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 # AUTO_TGTS += %.cmo %.cmx # or modify its value in skel.mk
 # COMPILE.cmo.ml = $(call echo_cmd,CAML $<) $(CAML) -c
 # COMPILE.cmx.ml = $(call echo_cmd,CAMLOPT $<) $(CAMLOPT) -c
-# together with corresponding two entries in 'skeleton' below:
-# $(OBJPATH)/%.cmo $(OBJPATH)/%.cmx: $(1)/%.ml | $(OBJPATH)
-# 	$(value COMPILECMD_TD)
+# AUTO_TD_RULES := .cmo&.cmx:.ml
+# The syntax for AUTO_TD_RULES is similar to AUTO_RULES but instead of
+# single output suffix (e.g. ".o") you have to list them all separated
+# by "&" (sorry, comma gives me problems since it is part of normal make
+# syntax for functions :P).  The above setting means that %.cmo and %.cmx
+# can be generated from %.ml via their respective COMPILE commands
+# expanded in COMPILECMD_TD (see below).
 
-COMPILECMD = $(COMPILE$(suffix $<)) -o $@ $<
+# Again this should be generic enough so that you won't have to touch it
 COMPILECMD_TD = $(COMPILE$(suffix $@)$(suffix $<)) -o $@ $<
 
-define skeleton
-$(OBJPATH)/%.o: $(1)/%.cpp | $(OBJPATH)
-	$(value COMPILECMD)
+# Definition of variable ${\n} containing just new-line character
+define \n
 
-$(OBJPATH)/%.o: $(1)/%.cc | $(OBJPATH)
-	$(value COMPILECMD)
 
-$(OBJPATH)/%.o: $(1)/%.c | $(OBJPATH)
-	$(value COMPILECMD)
 endef
+
+# Definition of 'skeleton' macro used in generation of recipes.  This
+# definition is itself computed so you should not modify it (unless you
+# know what you are doing :D).  It should be enough for you to add new
+# mappings to AUTO_RULES and AUTO_TD_RULES above and define/change
+# corresponding COMPILE.suffix and COMPILE.outsuffix.insuffix variables.
+$(eval define skeleton$(foreach rule,$(AUTO_RULES),${\n}$$(OBJPATH)/%$(subst :,: $$(1)/%,$(rule)) | $$(OBJPATH); $$(value COMPILECMD))${\n}\
+                      $(foreach rule,$(AUTO_TD_RULES),${\n}$$(OBJPATH)/%$(subst :,: $$(1)/%,$(subst &, $$(OBJPATH)/%,$(rule))) | $$(OBJPATH); $$(value COMPILECMD_TD))${\n}endef)
