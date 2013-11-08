@@ -79,6 +79,9 @@ LINK.cc = $(call echo_cmd,LINK $@) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(T
 # would just append ".o:.f" and set COMPILE.f (actually make already
 # defines it - just take a look at output of "make -p")
 AUTO_RULES := .o:.cpp .o:.cc .o:.c
+# Additional mapping together with corresponding variables can be specified
+# in user_rules.mk
+-include $(MK)/user_rules.mk
 
 # This compile command should be generic for most compilers - you should
 # just define appropriate COMPILE.suffix variable.
