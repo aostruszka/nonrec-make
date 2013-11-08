@@ -29,7 +29,11 @@ COLOR_TTY := $(shell [ `tput colors` -gt 2 ] && echo true)
 endif
 
 ifneq ($(VERBOSE),true)
-strip_top = $(subst $(TOP)/,,$(subst $(TOP_BUILD_DIR),,$(1)))
+ifneq ($(strip $(TOP_BUILD_DIR)),)
+  strip_top = $(subst $(TOP_BUILD_DIR)/,,$(1))
+else
+  strip_top = $(subst $(TOP)/,,$(1))
+endif
 ifeq ($(COLOR_TTY),true)
 echo_prog := $(shell if echo -e | grep -q -- -e; then echo echo; else echo echo -e; fi)
 echo_cmd = @$(echo_prog) "$(COLOR)$(call strip_top,$(1))$(NOCOLOR)";

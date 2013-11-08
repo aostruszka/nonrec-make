@@ -150,8 +150,16 @@ OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
 # By default OBJDIR is relative to the directory of the corresponding Rules.mk
 # however you can use TOP_BUILD_DIR to build all objects outside of your
 # project tree.
-#TOP_BUILD_DIR := /tmp/make-builddir
-OBJPATH = $(if $(TOP_BUILD_DIR),$(TOP_BUILD_DIR)$(d),$(d))/$(OBJDIR)
+#TOP_BUILD_DIR := /tmp/make-builddir/project_name
+ifneq ($(strip $(TOP_BUILD_DIR)),)
+  OBJPATH = $(TOP_BUILD_DIR)$(subst $(TOP),,$(d))/$(OBJDIR)
+  CLEAN_DIR = $(TOP_BUILD_DIR)$(subst $(TOP),,$(subst clean_,,$@))/$(OBJDIR)
+  DIST_CLEAN_DIR = $(TOP_BUILD_DIR)$(subst $(TOP),,$(subst dist_clean_,,$@))/$(firstword $(subst /, ,$(OBJDIR)))
+else
+  OBJPATH = $(d)/$(OBJDIR)
+  CLEAN_DIR = $(subst clean_,,$@)/$(OBJDIR)
+  DIST_CLEAN_DIR = $(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
+endif
 
 # This variable contains a list of subdirectories where to look for
 # sources.  That is if you have some/dir/Rules.mk where you name object
@@ -231,7 +239,7 @@ endef
 # have dist_clean on per directory level and the one below is enough
 ifneq ($(strip $(TOP_BUILD_DIR)),)
 dist_clean :
-	rm -rf $(TOP_BUILD_DIR)$(TOP)
+	rm -rf $(TOP_BUILD_DIR)
 endif
 
 # Suck in the default rules

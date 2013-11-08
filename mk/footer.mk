@@ -65,7 +65,7 @@ dist_clean_$(d) :
 else
 dist_clean_$(d) : clean_extra_$(d)
 endif
-	rm -rf $(TOP_BUILD_DIR)$(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
+	rm -rf $(DIST_CLEAN_DIR)
 endif
 
 ########################################################################
@@ -78,7 +78,7 @@ clean_$(d) :
 else
 clean_$(d) : clean_extra_$(d)
 endif
-	rm -f $(TOP_BUILD_DIR)$(subst clean_,,$@)/$(OBJDIR)/*
+	rm -f $(CLEAN_DIR)/*
 
 # clean_extra is meant for the extra output that is generated in source
 # directory (e.g. generated source from lex/yacc) so I'm not using
