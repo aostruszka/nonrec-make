@@ -183,7 +183,7 @@ SRCS_VPATH := src
 # are # updated by MAKECMD.a (exemplary setting below).  If the target
 # is not filtered out by AUTO_TGTS and there's neither _CMD nor suffix
 # specific command to build the target DEFAULT_MAKECMD is used.
-MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $? && $(RANLIB) $@
+MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(DEP_OBJS) && $(RANLIB) $@
 MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -shared -o $@
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
 
@@ -219,7 +219,7 @@ $(2)_CMD =
 endef
 
 define tgt_rule
-abs_deps := $$(foreach dep,$$(DEPS_$(1)),$$(if $$(filter /%,$$(dep)),$$(dep),$$(addprefix $(OBJPATH)/,$$(dep))))
+abs_deps := $$(foreach dep,$$(DEPS_$(1)),$$(if $$(or $$(filter /%,$$(dep)),$$(filter $$$$%,$$(dep))),$$(dep),$$(addprefix $(OBJPATH)/,$$(dep))))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
 $(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),| $(OBJPATH),)
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))

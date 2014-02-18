@@ -44,6 +44,7 @@ include $(MK)/footer.mk
 # Rules.top has exactly the same structure as other Rules.mk
 include $(MK)/skel.mk
 
+.SECONDEXPANSION:
 $(eval $(value HEADER))
 include $(TOP)/Rules.top
 $(eval $(value FOOTER))
