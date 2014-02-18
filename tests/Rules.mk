@@ -1,0 +1,1 @@
+SUBDIRS = cross-dependencies
