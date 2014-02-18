@@ -149,8 +149,9 @@ OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
 
 # By default OBJDIR is relative to the directory of the corresponding Rules.mk
 # however you can use TOP_BUILD_DIR to build all objects outside of your
-# project tree.
-#TOP_BUILD_DIR := /tmp/make-builddir/project_name
+# project tree.  This should be an absolute path.  Note that it can be
+# also inside your project like example below.
+#TOP_BUILD_DIR := $(TOP)/build_dir
 ifneq ($(strip $(TOP_BUILD_DIR)),)
   OBJPATH = $(TOP_BUILD_DIR)$(subst $(TOP),,$(d))/$(OBJDIR)
   CLEAN_DIR = $(TOP_BUILD_DIR)$(subst $(TOP),,$(subst clean_,,$@))/$(OBJDIR)

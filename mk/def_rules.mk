@@ -30,7 +30,7 @@ endif
 
 ifneq ($(VERBOSE),true)
 ifneq ($(strip $(TOP_BUILD_DIR)),)
-  strip_top = $(subst $(TOP_BUILD_DIR)/,,$(1))
+  strip_top = $(subst $(TOP)/,,$(subst $(TOP_BUILD_DIR)/,,$(1)))
 else
   strip_top = $(subst $(TOP)/,,$(1))
 endif
