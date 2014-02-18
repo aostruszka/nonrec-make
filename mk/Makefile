@@ -1,10 +1,5 @@
-# When I'm using default shell on Cygwin $(shell pwd) does not give the
-# same result as $(shell echo $$PWD) or $(shell echo `pwd`).  It gives
-# me path with symbolic links resolved whereas the later two do not do
-# that.  I prefer unresolved version and since simple $(shell pwd) looks
-# nicer than other two I'm sticking with bash :).
 SHELL := /bin/bash
-RUNDIR := $(shell pwd)
+RUNDIR := $(CURDIR)
 ifndef TOP
 TOP := $(shell \
        top=$(RUNDIR); \
