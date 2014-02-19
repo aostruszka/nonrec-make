@@ -150,13 +150,19 @@ OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
 # Convenience function to convert from a build directory back to the
 # "real directory" of a target
 define build_to_real_dir
-$(if $(strip $(TOP_BUILD_DIR)),$(patsubst $(TOP_BUILD_DIR)%/$(OBJDIR),$(TOP)%,$(1)),$(patsubst %/$(OBJDIR),%,$(1)))
+$(if $(strip $(TOP_BUILD_DIR)),$(patsubst $(TOP_BUILD_DIR)%/$(OBJDIR),$(TOP)%,$(abspath $(1))),$(patsubst %/$(OBJDIR),%,$(abspath $(1))))
 endef
 
 # Convenience function to convert from the "real directory" to the build
 # directory
 define real_to_build_dir
-$(if $(strip $(TOP_BUILD_DIR)),$(TOP_BUILD_DIR)$(subst $(TOP),,$(1))/$(OBJDIR),$(1)/$(OBJDIR))
+$(if $(strip $(TOP_BUILD_DIR)),$(TOP_BUILD_DIR)$(subst $(TOP),,$(abspath $(1)))/$(OBJDIR),$(abspath $(1))/$(OBJDIR))
+endef
+
+# Given relative path from current dir to target, return its path in the build
+# directory
+define find_target_in_build_dir
+$(call real_to_build_dir,$(dir $(d)/$(1)))/$(notdir $(1))
 endef
 
 # By default OBJDIR is relative to the directory of the corresponding Rules.mk
@@ -226,7 +232,7 @@ $(2)_CMD =
 endef
 
 define tgt_rule
-abs_deps := $$(foreach dep,$$(DEPS_$(1)),$$(if $$(or $$(filter /%,$$(dep)),$$(filter $$$$%,$$(dep))),$$(dep),$$(addprefix $(OBJPATH)/,$$(dep))))
+abs_deps := $$(foreach dep,$$(DEPS_$(1)),$$(if $$(or $$(filter /%,$$(dep)),$$(filter $$$$%,$$(dep))),$$(dep),$$(call find_target_in_build_dir,$$(dep))))
 -include $$(addsuffix .d,$$(basename $$(abs_deps)))
 $(1): $$(abs_deps) $(if $(findstring $(OBJDIR),$(1)),| $(OBJPATH),)
 	$$(or $$(CMD_$(1)),$$(MAKECMD$$(suffix $$@)),$$(DEFAULT_MAKECMD))
