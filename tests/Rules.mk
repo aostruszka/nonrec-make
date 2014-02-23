@@ -1,1 +1,1 @@
-SUBDIRS = cross-dependencies includes
+SUBDIRS = cross-dependencies includes parent-dependency
