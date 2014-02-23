@@ -147,20 +147,27 @@ AUTO_TGTS := %.o
 # choice would be OBJDIR := obj/$(HOST_ARCH)) or debugging being on/off.
 OBJDIR := $(if $(BUILD_MODE),obj/$(BUILD_MODE),obj)
 
+# Convenience function to convert from a build directory back to the
+# "real directory" of a target
+define build_to_real_dir
+$(if $(strip $(TOP_BUILD_DIR)),$(patsubst $(TOP_BUILD_DIR)%/$(OBJDIR),$(TOP)%,$(1)),$(patsubst %/$(OBJDIR),%,$(1)))
+endef
+
+# Convenience function to convert from the "real directory" to the build
+# directory
+define real_to_build_dir
+$(if $(strip $(TOP_BUILD_DIR)),$(TOP_BUILD_DIR)$(subst $(TOP),,$(1))/$(OBJDIR),$(1)/$(OBJDIR))
+endef
+
 # By default OBJDIR is relative to the directory of the corresponding Rules.mk
 # however you can use TOP_BUILD_DIR to build all objects outside of your
 # project tree.  This should be an absolute path.  Note that it can be
 # also inside your project like example below.
 #TOP_BUILD_DIR := $(TOP)/build_dir
-ifneq ($(strip $(TOP_BUILD_DIR)),)
-  OBJPATH = $(TOP_BUILD_DIR)$(subst $(TOP),,$(d))/$(OBJDIR)
-  CLEAN_DIR = $(TOP_BUILD_DIR)$(subst $(TOP),,$(subst clean_,,$@))/$(OBJDIR)
-  DIST_CLEAN_DIR = $(TOP_BUILD_DIR)$(subst $(TOP),,$(subst dist_clean_,,$@))/$(firstword $(subst /, ,$(OBJDIR)))
-else
-  OBJPATH = $(d)/$(OBJDIR)
-  CLEAN_DIR = $(subst clean_,,$@)/$(OBJDIR)
-  DIST_CLEAN_DIR = $(subst dist_clean_,,$@)/$(firstword $(subst /, ,$(OBJDIR)))
-endif
+OBJPATH = $(call real_to_build_dir,$(d))
+CLEAN_DIR = $(call real_to_build_dir,$(subst clean_,,$@))
+DIST_CLEAN_DIR = $(patsubst %/$(OBJDIR),%/$(firstword $(subst /, ,$(OBJDIR))),\
+				 $(call real_to_build_dir,$(subst dist_clean_,,$@)))
 
 # This variable contains a list of subdirectories where to look for
 # sources.  That is if you have some/dir/Rules.mk where you name object
@@ -173,7 +180,7 @@ SRCS_VPATH := src
 # reliable way to refer to "per directory flags".  In theory one could
 # use automatic variable already defined by make "<D" but this will not
 # work well when somebody uses SRCS_VPATH variable.
-@RD = $(patsubst %/$(OBJDIR),%,$(@D))
+@RD = $(call build_to_real_dir,$(@D))
 
 # These are commands that are used to update the target.  If you have
 # a target that make handles with built in rules just add its pattern to
