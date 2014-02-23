@@ -115,5 +115,16 @@ endif
 # This is a default rule - see Makefile
 dir_$(d) : $(TARGETS_$(d))
 
+# Create aliases for rules with paths relative to the top
+# for easier use
+RELATIVE_PATH := $(patsubst $(TOP)/%,%,$(d))
+ifneq ($(RELATIVE_PATH),$(TOP))
+clean_tree_$(RELATIVE_PATH) : tree_$(d)
+clean_extra_$(RELATIVE_PATH) : tree_$(d)
+tree_$(RELATIVE_PATH) : tree_$(d)
+dir_$(RELATIVE_PATH) : dir_$(d)
+endif
+RELATIVE_PATH :=
+
 endif
 endef
