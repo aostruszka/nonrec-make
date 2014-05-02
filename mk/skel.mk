@@ -126,7 +126,9 @@ SOEXT := $(or $(SOEXT),so)
 # I define these for convenience - you can use them in your command for
 # updating the target.
 DEP_OBJS = $(filter %.o, $^)
+DEP_OBJS? = $(filter %.o, $?)
 DEP_ARCH = $(filter %.a, $^)
+DEP_ARCH? = $(filter %.a, $?)
 DEP_LIBS = $(addprefix -L,$(dir $(filter %.$(SOEXT), $^))) $(patsubst lib%.$(SOEXT),-l%,$(notdir $(filter %.$(SOEXT), $^)))
 
 # Kept for backward compatibility - you should stop using these since
@@ -190,7 +192,23 @@ SRCS_VPATH := src
 # are # updated by MAKECMD.a (exemplary setting below).  If the target
 # is not filtered out by AUTO_TGTS and there's neither _CMD nor suffix
 # specific command to build the target DEFAULT_MAKECMD is used.
-MAKECMD.a = $(call echo_cmd,AR $@) $(AR) $(ARFLAGS) $@ $(DEP_OBJS) && $(RANLIB) $@
+
+# Creating archives gets more complicated if some dependencies are themselves
+# archives. In this case, the contents have to be extracted and archived again
+# in a larger archive.
+EXTRACT_DIR = $@_extract
+MAKECMD.a = $(call echo_cmd,AR $@) \
+	$(AR) $(ARFLAGS) $@ $(DEP_OBJS?) \
+	$(if $(DEP_ARCH?), \
+		&& mkdir -p $(EXTRACT_DIR) \
+		&& cd $(EXTRACT_DIR) \
+		$(foreach lib,$(DEP_ARCH?),&& $(AR) xo $(lib)) \
+		&& cd - \
+		&& $(AR) $(ARFLAGS) $@ $(EXTRACT_DIR)/*.o \
+		&& rm -rf $(EXTRACT_DIR) \
+	) \
+	&& $(RANLIB) $@
+
 MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -shared -o $@
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
 
