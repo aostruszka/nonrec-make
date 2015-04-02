@@ -198,16 +198,18 @@ SRCS_VPATH := src
 # in a larger archive.
 EXTRACT_DIR = $@_extract
 MAKECMD.a = $(call echo_cmd,AR $@) \
-	$(AR) $(ARFLAGS) $@ $(DEP_OBJS?) \
+	$(if $(DEP_OBJS?), \
+		$(AR) $(ARFLAGS) $@ $(DEP_OBJS?) \
+		&&) \
 	$(if $(DEP_ARCH?), \
-		&& mkdir -p $(EXTRACT_DIR) \
+		mkdir -p $(EXTRACT_DIR) \
 		&& cd $(EXTRACT_DIR) \
 		$(foreach lib,$(DEP_ARCH?),&& $(AR) xo $(lib)) \
 		&& cd - \
 		&& $(AR) $(ARFLAGS) $@ $(EXTRACT_DIR)/*.o \
 		&& rm -rf $(EXTRACT_DIR) \
-	) \
-	&& $(RANLIB) $@
+		&&) \
+	$(RANLIB) $@
 
 MAKECMD.$(SOEXT) = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -shared -o $@
 DEFAULT_MAKECMD = $(LINK.cc) $(DEP_OBJS) $(DEP_ARCH) $(DEP_LIBS) $(LIBS_$(@)) $(LDLIBS) -o $@
