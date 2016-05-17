@@ -270,5 +270,11 @@ dist_clean :
 	rm -rf $(TOP_BUILD_DIR)
 endif
 
+# Find all files that match a path or wildcard pattern anywhere in the
+# SRCS_VPATH
+define find_in_vpath
+$(strip $(foreach sd,. $(SRCS_VPATH),$(wildcard $(addprefix $(d)/$(sd)/,$(1)))))
+endef
+
 # Suck in the default rules
 include $(MK)/def_rules.mk
