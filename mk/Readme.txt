@@ -36,7 +36,7 @@ This is my attempt to implement a non-recursive make build system.  For
 the motivation Google for the paper "Recursive make consider harmful" by
 Peter Miller.
 
-I've seen couple of other proposals and decided to have something that
+I've seen couples of other proposals and decided to have something that
 will be a blend of nice ideas I have seen plus some improvements.  If
 you actually use this I'd like to hear from you :) - is it useful, does
 it perform well, do you have any suggestions for the improvements ...
